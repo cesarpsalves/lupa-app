@@ -1,0 +1,42 @@
+# ════════════════════════════════════════════════════════════
+# Dependências de runtime (rodam em produção e em dev)
+# ════════════════════════════════════════════════════════════
+# Gere base.txt com: pip-compile requirements/base.in
+# Atualize todos: make lock
+
+# ──────────── Core ────────────
+Django>=5.1,<5.2
+django-environ>=0.11,<1.0
+psycopg[binary,pool]>=3.2,<4.0
+redis>=5.0,<6.0
+django-redis>=5.4,<6.0
+
+# ──────────── Auth & segurança ────────────
+argon2-cffi>=23.1,<24.0
+django-axes>=7.0,<8.0
+django-otp>=1.5,<2.0
+qrcode>=7.4,<8.0
+django-csp>=3.8,<4.0
+
+# ──────────── Frontend / HTMX ────────────
+django-htmx>=1.19,<2.0
+django-crispy-forms>=2.3,<3.0
+crispy-tailwind>=1.0,<2.0
+django-template-partials>=24.4
+
+# ──────────── Email ────────────
+django-anymail[resend]>=11.1,<12.0
+
+# ──────────── Documentos / PDF ────────────
+weasyprint>=62.0,<63.0
+
+# ──────────── Tasks ────────────
+django-q2>=1.7,<2.0
+
+# ──────────── Server ────────────
+gunicorn>=23.0,<24.0
+uvicorn[standard]>=0.30,<1.0
+whitenoise>=6.7,<7.0
+
+# ──────────── Observabilidade ────────────
+sentry-sdk[django]>=2.14,<3.0

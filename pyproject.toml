@@ -1,0 +1,106 @@
+[project]
+name = "lupa"
+version = "0.1.0"
+description = "Sistema de gestão para prestadores de serviço — começando por fotógrafos"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "Paulo Alves", email = "informatica@kfp.com.br" }]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["migrations", "staticfiles", "media"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "N",    # pep8-naming
+    "UP",   # pyupgrade
+    "B",    # bugbear
+    "C4",   # comprehensions
+    "DJ",   # django
+    "S",    # security (bandit subset)
+    "SIM",  # simplify
+    "TCH",  # type-checking
+    "RUF",  # ruff-specific
+]
+ignore = [
+    "E501",   # line length — formatter handles
+    "S101",   # assert (ok em testes)
+    "DJ001",  # null=True em CharField (decisão consciente em alguns casos)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["S", "DJ"]
+"**/test_*.py" = ["S", "DJ"]
+"**/settings/*.py" = ["S105", "S106"]   # senhas em settings de dev/test
+"manage.py" = ["S"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.mypy]
+python_version = "3.12"
+strict = false
+warn_return_any = true
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_untyped_defs = false   # gradual typing — apertamos depois
+check_untyped_defs = true
+no_implicit_optional = true
+plugins = ["mypy_django_plugin.main"]
+exclude = ["migrations/", "staticfiles/", "media/"]
+
+[[tool.mypy.overrides]]
+module = ["weasyprint.*", "django_htmx.*", "axes.*", "allauth.*"]
+ignore_missing_imports = true
+
+[tool.django-stubs]
+django_settings_module = "config.settings.dev"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.test"
+python_files = ["test_*.py", "*_test.py"]
+addopts = [
+    "--reuse-db",
+    "--strict-markers",
+    "--tb=short",
+    "-ra",
+]
+markers = [
+    "slow: marca testes lentos",
+    "integration: requer banco e dependências externas",
+    "tenant: testes específicos de isolamento multi-tenant",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning:django.*",
+]
+
+[tool.coverage.run]
+source = ["apps", "config"]
+omit = [
+    "*/migrations/*",
+    "*/tests/*",
+    "*/test_*.py",
+    "manage.py",
+    "config/wsgi.py",
+    "config/asgi.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.:",
+]
+fail_under = 70
+show_missing = true
+skip_covered = false

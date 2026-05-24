@@ -1,0 +1,6 @@
+# ════════════════════════════════════════════════════════════
+# Dependências de produção
+# ════════════════════════════════════════════════════════════
+-r base.in
+
+# Sem extras de desenvolvimento — só o essencial pra rodar.

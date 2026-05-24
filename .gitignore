@@ -1,0 +1,105 @@
+# ──────────────────────────────────────────────────
+# Secrets — NUNCA versionados
+# ──────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+.secret
+
+# ──────────────────────────────────────────────────
+# Python
+# ──────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+build/
+dist/
+pip-wheel-metadata/
+
+# Virtualenv
+.venv/
+venv/
+env/
+ENV/
+
+# pip-tools
+requirements/*.txt
+!requirements/.gitkeep
+
+# ──────────────────────────────────────────────────
+# Django
+# ──────────────────────────────────────────────────
+*.log
+db.sqlite3
+db.sqlite3-journal
+/staticfiles/
+/media/
+local_settings.py
+.django-cache/
+
+# Migrations: versionamos (não ignorar)
+# !*/migrations/
+
+# ──────────────────────────────────────────────────
+# Testing / Coverage
+# ──────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+
+# ──────────────────────────────────────────────────
+# Type checking
+# ──────────────────────────────────────────────────
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+.ruff_cache/
+
+# ──────────────────────────────────────────────────
+# IDE / Editor
+# ──────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ──────────────────────────────────────────────────
+# Node (tailwind CLI gera bundle CSS)
+# ──────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# ──────────────────────────────────────────────────
+# Docker
+# ──────────────────────────────────────────────────
+.docker/
+docker-compose.override.yml
+
+# ──────────────────────────────────────────────────
+# Outros
+# ──────────────────────────────────────────────────
+*.bak
+*.tmp
+tmp/
+.cache/

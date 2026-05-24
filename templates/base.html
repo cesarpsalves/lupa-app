@@ -1,0 +1,63 @@
+{% load static %}<!DOCTYPE html>
+<html lang="pt-br" class="bg-slate-950 text-slate-100">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="description" content="{% block meta_description %}Sistema de gestão para prestadores de serviço — agenda, atendimentos, cupons e caixa num só app.{% endblock %}" />
+  <title>{% block title %}LUPA — Gestão para prestadores de serviço{% endblock %}</title>
+
+  <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  {# Tailwind via CDN no MVP — substituído por build local quando escalar. #}
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          colors: {
+            lupa: {
+              50: '#eef2ff', 100: '#e0e7ff', 500: '#254290',
+              600: '#1f378a', 700: '#1b2f73', 900: '#101a47',
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <script src="https://unpkg.com/htmx.org@2.0.2" defer></script>
+  <script src="https://unpkg.com/alpinejs@3.14.1/dist/cdn.min.js" defer></script>
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="min-h-screen font-sans antialiased flex flex-col">
+  {% block header %}
+    {% include "components/header.html" %}
+  {% endblock %}
+
+  <main class="flex-1">
+    {% if messages %}
+      <div class="max-w-6xl mx-auto px-4 mt-4 space-y-2">
+        {% for message in messages %}
+          <div role="status" class="rounded-lg border border-slate-800 bg-slate-900/60 px-4 py-3 text-sm
+                                    {% if message.tags == 'error' %}text-red-300 border-red-900/60{% endif %}
+                                    {% if message.tags == 'success' %}text-emerald-300 border-emerald-900/60{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block footer %}
+    {% include "components/footer.html" %}
+  {% endblock %}
+</body>
+</html>

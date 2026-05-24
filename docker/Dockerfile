@@ -1,0 +1,66 @@
+# syntax=docker/dockerfile:1.7
+# ════════════════════════════════════════════════════════════
+# LUPA — Dockerfile multi-stage
+# ════════════════════════════════════════════════════════════
+
+# ────────── Stage: builder ──────────
+FROM python:3.12-slim AS builder
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    libpango-1.0-0 libpangoft2-1.0-0 \
+    libcairo2 libffi-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /build
+
+COPY requirements/base.in requirements/prod.in /build/requirements/
+RUN pip install --upgrade pip pip-tools \
+    && pip-compile --quiet --output-file=/build/requirements/prod.txt /build/requirements/prod.in
+
+RUN pip install --prefix=/install -r /build/requirements/prod.txt
+
+# ────────── Stage: runtime ──────────
+FROM python:3.12-slim AS runtime
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    DJANGO_SETTINGS_MODULE=config.settings.prod \
+    PATH="/usr/local/bin:$PATH"
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    libpango-1.0-0 libpangoft2-1.0-0 \
+    libcairo2 \
+    fonts-liberation \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Usuário non-root
+RUN groupadd --system lupa && useradd --system --gid lupa --create-home lupa
+
+WORKDIR /app
+
+COPY --from=builder /install /usr/local
+COPY --chown=lupa:lupa . /app
+
+USER lupa
+
+EXPOSE 8000
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+    CMD curl -fsS http://127.0.0.1:8000/healthz || exit 1
+
+ENTRYPOINT ["/app/docker/entrypoint.sh"]
+CMD ["gunicorn", "config.wsgi:application", \
+     "--bind", "0.0.0.0:8000", \
+     "--workers", "3", \
+     "--worker-class", "uvicorn.workers.UvicornWorker", \
+     "--access-logfile", "-", \
+     "--error-logfile", "-"]
