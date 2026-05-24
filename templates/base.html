@@ -4,13 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#2c3d8c" />
-  <meta name="description" content="{% block meta_description %}Sistema de gestão para prestadores de serviço — agenda, atendimentos, cupons e caixa num só app.{% endblock %}" />
-  <title>{% block title %}LUPA — Gestão para prestadores de serviço{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}LUPA Soluções — Sistema de gestão para prestadores de serviço. Agenda, atendimentos, cupons e caixa num só app.{% endblock %}" />
+  <meta name="application-name" content="LUPA Soluções" />
+  <meta name="apple-mobile-web-app-title" content="LUPA Soluções" />
+  <meta property="og:title" content="LUPA Soluções — Gestão pra prestadores de serviço" />
+  <meta property="og:description" content="Agenda, atendimentos, cupons e caixa — num só app." />
+  <meta property="og:type" content="website" />
+  <title>{% block title %}LUPA Soluções — Gestão pra prestadores de serviço{% endblock %}</title>
 
   <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}" />
+  <link rel="apple-touch-icon" href="{% static 'img/logo.svg' %}" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="{% static 'css/animations.css' %}" />
 
   {# Aplica tema antes do paint pra evitar FOUC #}
   <script>
@@ -44,6 +52,7 @@
 
   <script src="https://unpkg.com/htmx.org@2.0.2" defer></script>
   <script src="https://unpkg.com/alpinejs@3.14.1/dist/cdn.min.js" defer></script>
+  <script src="{% static 'js/masks.js' %}" defer></script>
 
   {% block extra_head %}{% endblock %}
 </head>

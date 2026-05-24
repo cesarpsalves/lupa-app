@@ -5,19 +5,27 @@
                supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-slate-950/60">
   <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
 
-    {# Logo #}
-    <a href="{% url 'public:landing' %}" class="flex items-center gap-3 group">
-      <img src="{% static 'img/logo.svg' %}" alt="LUPA"
-           class="h-9 w-9 transition-transform group-hover:scale-105" />
-      <span class="text-base font-semibold tracking-tight
-                   text-slate-900 group-hover:text-lupa-500
-                   dark:text-slate-100 dark:group-hover:text-white
-                   transition-colors">
-        LUPA
+    {# Logo + nome #}
+    <a href="{% url 'public:landing' %}"
+       class="flex items-center gap-3 group tap-target -ml-2 px-2 rounded-lg
+              hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors">
+      <img src="{% static 'img/logo.svg' %}" alt="LUPA Soluções"
+           class="h-9 w-9 logo-pulse transition-transform group-hover:scale-105" />
+      <span class="flex flex-col leading-none">
+        <span class="text-[15px] font-bold tracking-tight
+                     text-slate-900 group-hover:text-lupa-500
+                     dark:text-slate-100 dark:group-hover:text-white
+                     transition-colors">
+          LUPA
+        </span>
+        <span class="text-[10px] uppercase tracking-[0.18em] mt-0.5
+                     text-slate-500 dark:text-slate-400">
+          Soluções
+        </span>
       </span>
     </a>
 
-    {# Navegação #}
+    {# Navegação desktop #}
     <nav class="hidden md:flex items-center gap-8 text-sm
                 text-slate-600 dark:text-slate-300" aria-label="Principal">
       <a href="#para-quem" class="hover:text-lupa-500 dark:hover:text-white transition-colors">Para quem é</a>
@@ -28,24 +36,22 @@
     {# Ações + tema #}
     <div class="flex items-center gap-2 sm:gap-3" x-data="{ open: false }">
 
-      {# Tema toggle #}
+      {# Tema toggle (44×44 tap area) #}
       <button type="button"
               @click="
                 const isDark = document.documentElement.classList.toggle('dark');
                 localStorage.setItem('lupa-theme', isDark ? 'dark' : 'light');
               "
               aria-label="Alternar tema claro/escuro"
-              class="grid h-9 w-9 place-items-center rounded-full
-                     border border-slate-200 hover:bg-slate-100
+              class="theme-toggle tap-target grid h-11 w-11 place-items-center rounded-full
+                     border border-slate-200 hover:bg-slate-100 active:scale-95
                      dark:border-slate-800 dark:hover:bg-slate-900
-                     transition-colors">
-        {# Ícone sol — visível em dark mode #}
-        <svg class="hidden dark:block h-4 w-4 text-yellow-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                     transition-colors btn-press">
+        <svg class="hidden dark:block h-5 w-5 text-yellow-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="12" cy="12" r="4"/>
           <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
         </svg>
-        {# Ícone lua — visível em light mode #}
-        <svg class="block dark:hidden h-4 w-4 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <svg class="block dark:hidden h-5 w-5 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
         </svg>
       </button>
@@ -57,8 +63,10 @@
         <form action="{% url 'accounts:logout' %}" method="post" class="inline">
           {% csrf_token %}
           <button type="submit"
-                  class="text-sm text-slate-600 hover:text-lupa-500
-                         dark:text-slate-300 dark:hover:text-white transition-colors">
+                  class="tap-target px-3 py-2 text-sm rounded-lg btn-press
+                         text-slate-600 hover:text-lupa-500 hover:bg-slate-100
+                         dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-900
+                         transition-colors">
             Sair
           </button>
         </form>
@@ -69,9 +77,10 @@
           Entrar
         </a>
         <a href="{% url 'accounts:signup' %}"
-           class="inline-flex items-center gap-2 rounded-full bg-lupa-500
-                  px-4 py-2 text-sm font-medium text-white
-                  hover:bg-lupa-600 transition-colors shadow-sm">
+           class="tap-target inline-flex items-center gap-2 rounded-full bg-lupa-500
+                  px-4 sm:px-5 py-2.5 text-sm font-medium text-white
+                  hover:bg-lupa-600 active:scale-95 transition-all
+                  shadow-sm hover:shadow-md hover:shadow-lupa-500/20 btn-press">
           Começar grátis
         </a>
       {% endif %}

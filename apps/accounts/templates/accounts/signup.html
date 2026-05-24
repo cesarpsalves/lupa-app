@@ -1,107 +1,148 @@
 {% extends "base.html" %}
 
-{% block title %}Criar conta — LUPA{% endblock %}
+{% block title %}Criar conta — LUPA Soluções{% endblock %}
 
 {% block content %}
-<section class="mx-auto max-w-md px-4 sm:px-6 py-16">
-  <h1 class="text-2xl font-semibold text-slate-900 dark:text-white">Crie sua conta</h1>
-  <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">Grátis pra começar. Sem cartão.</p>
+<section class="mx-auto max-w-md px-4 sm:px-6 py-10 sm:py-16">
+  <h1 class="fade-up text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+    Crie sua conta
+  </h1>
+  <p class="fade-up fade-up-delay-1 mt-1.5 text-sm text-slate-600 dark:text-slate-400">
+    Grátis pra começar. Sem cartão.
+  </p>
 
   <form method="post" novalidate
-        class="mt-8 grid gap-4 rounded-2xl border p-6
+        class="fade-up fade-up-delay-2 mt-8 grid gap-5 rounded-2xl border p-5 sm:p-6 shadow-sm
                border-slate-200 bg-white
                dark:border-slate-800 dark:bg-slate-900/50">
     {% csrf_token %}
 
     {% if form.non_field_errors %}
-      <div class="rounded-lg border px-4 py-3 text-sm
+      <div role="alert" class="rounded-lg border px-4 py-3 text-sm
                   border-red-300 bg-red-50 text-red-800
                   dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-200">
         {{ form.non_field_errors|join:" " }}
       </div>
     {% endif %}
 
+    {# Nome #}
     <div>
       <label for="id_first_name" class="block text-sm font-medium text-slate-700 dark:text-slate-200">
         {{ form.first_name.label }}
       </label>
       <input type="text" id="id_first_name" name="first_name" required autofocus
              value="{{ form.first_name.value|default:'' }}"
-             class="mt-1 block w-full rounded-lg shadow-sm
-                    border-slate-300 bg-white text-slate-900
-                    focus:border-lupa-500 focus:ring-lupa-500
-                    dark:border-slate-700 dark:bg-slate-950/60 dark:text-white" />
+             autocomplete="given-name" maxlength="120"
+             class="mt-1.5 block w-full rounded-lg shadow-sm transition-colors
+                    border-slate-300 bg-white text-slate-900 placeholder-slate-400
+                    focus:border-lupa-500 focus:ring-2 focus:ring-lupa-500/40
+                    dark:border-slate-700 dark:bg-slate-950/60 dark:text-white dark:placeholder-slate-500" />
       {% if form.first_name.errors %}
-        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.first_name.errors|join:" " }}</p>
+        <p class="mt-1.5 text-sm text-red-600 dark:text-red-400">{{ form.first_name.errors|join:" " }}</p>
       {% endif %}
     </div>
 
+    {# Email #}
     <div>
       <label for="id_email" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Email</label>
       <input type="email" id="id_email" name="email" required autocomplete="email"
              value="{{ form.email.value|default:'' }}"
-             class="mt-1 block w-full rounded-lg shadow-sm
+             class="mt-1.5 block w-full rounded-lg shadow-sm transition-colors
                     border-slate-300 bg-white text-slate-900
-                    focus:border-lupa-500 focus:ring-lupa-500
+                    focus:border-lupa-500 focus:ring-2 focus:ring-lupa-500/40
                     dark:border-slate-700 dark:bg-slate-950/60 dark:text-white" />
       {% if form.email.errors %}
-        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.email.errors|join:" " }}</p>
+        <p class="mt-1.5 text-sm text-red-600 dark:text-red-400">{{ form.email.errors|join:" " }}</p>
       {% endif %}
     </div>
 
+    {# WhatsApp / telefone com máscara #}
+    <div>
+      <label for="id_phone" class="block text-sm font-medium text-slate-700 dark:text-slate-200">
+        {{ form.phone.label }}
+        <span class="text-slate-400 dark:text-slate-500 font-normal">(opcional)</span>
+      </label>
+      <input type="tel" id="id_phone" name="phone"
+             value="{{ form.phone.value|default:'' }}"
+             data-mask="phone" inputmode="numeric" autocomplete="tel-national"
+             maxlength="15" placeholder="(11) 91234-5678"
+             class="mt-1.5 block w-full rounded-lg shadow-sm transition-colors
+                    border-slate-300 bg-white text-slate-900 placeholder-slate-400
+                    focus:border-lupa-500 focus:ring-2 focus:ring-lupa-500/40
+                    dark:border-slate-700 dark:bg-slate-950/60 dark:text-white dark:placeholder-slate-500" />
+      <p data-mask-error="id_phone"
+         class="hidden mt-1.5 text-sm text-red-600 dark:text-red-400"
+         aria-live="polite"></p>
+      <p class="mt-1.5 text-xs text-slate-500 dark:text-slate-500">{{ form.phone.help_text }}</p>
+      {% if form.phone.errors %}
+        <p class="mt-1.5 text-sm text-red-600 dark:text-red-400">{{ form.phone.errors|join:" " }}</p>
+      {% endif %}
+    </div>
+
+    {# Senha #}
     <div>
       <label for="id_password1" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Senha</label>
-      <input type="password" id="id_password1" name="password1" required autocomplete="new-password" minlength="12"
-             class="mt-1 block w-full rounded-lg shadow-sm
+      <input type="password" id="id_password1" name="password1" required
+             autocomplete="new-password" minlength="12"
+             class="mt-1.5 block w-full rounded-lg shadow-sm transition-colors
                     border-slate-300 bg-white text-slate-900
-                    focus:border-lupa-500 focus:ring-lupa-500
+                    focus:border-lupa-500 focus:ring-2 focus:ring-lupa-500/40
                     dark:border-slate-700 dark:bg-slate-950/60 dark:text-white" />
-      <p class="mt-1 text-xs text-slate-500 dark:text-slate-500">
+      <p class="mt-1.5 text-xs text-slate-500 dark:text-slate-500">
         Mínimo 12 caracteres. Use uma frase que só você lembra.
       </p>
       {% if form.password1.errors %}
-        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.password1.errors|join:" " }}</p>
+        <p class="mt-1.5 text-sm text-red-600 dark:text-red-400">{{ form.password1.errors|join:" " }}</p>
       {% endif %}
     </div>
 
+    {# Confirma senha #}
     <div>
       <label for="id_password2" class="block text-sm font-medium text-slate-700 dark:text-slate-200">
         Confirme a senha
       </label>
       <input type="password" id="id_password2" name="password2" required autocomplete="new-password"
-             class="mt-1 block w-full rounded-lg shadow-sm
+             class="mt-1.5 block w-full rounded-lg shadow-sm transition-colors
                     border-slate-300 bg-white text-slate-900
-                    focus:border-lupa-500 focus:ring-lupa-500
+                    focus:border-lupa-500 focus:ring-2 focus:ring-lupa-500/40
                     dark:border-slate-700 dark:bg-slate-950/60 dark:text-white" />
       {% if form.password2.errors %}
-        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.password2.errors|join:" " }}</p>
+        <p class="mt-1.5 text-sm text-red-600 dark:text-red-400">{{ form.password2.errors|join:" " }}</p>
       {% endif %}
     </div>
 
+    {# Termos #}
     <label class="flex items-start gap-3 text-sm text-slate-700 dark:text-slate-300">
       <input type="checkbox" name="accept_terms" required
-             class="mt-1 rounded text-lupa-500 focus:ring-lupa-500
+             class="mt-1 h-5 w-5 rounded text-lupa-500 focus:ring-2 focus:ring-lupa-500/40
                     border-slate-300 bg-white
                     dark:border-slate-700 dark:bg-slate-950/60" />
       <span>
         Li e aceito os
-        <a href="#" class="underline hover:text-lupa-500 dark:hover:text-white">termos de uso</a>
+        <a href="#" class="underline decoration-slate-400 underline-offset-2 hover:text-lupa-500 dark:hover:text-white transition-colors">termos de uso</a>
         e a
-        <a href="#" class="underline hover:text-lupa-500 dark:hover:text-white">política de privacidade</a>.
+        <a href="#" class="underline decoration-slate-400 underline-offset-2 hover:text-lupa-500 dark:hover:text-white transition-colors">política de privacidade</a>.
       </span>
     </label>
 
+    {# Submit #}
     <button type="submit"
-            class="mt-2 inline-flex items-center justify-center rounded-full
-                   bg-lupa-500 px-5 py-2.5 text-sm font-medium text-white
-                   hover:bg-lupa-600 transition-colors">
+            class="tap-target btn-press mt-2 inline-flex items-center justify-center gap-2 rounded-full
+                   bg-lupa-500 px-6 py-3.5 text-base font-medium text-white
+                   hover:bg-lupa-600 active:scale-95 transition-all
+                   shadow-lg shadow-lupa-500/20 hover:shadow-xl hover:shadow-lupa-500/30">
       Criar conta
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
     </button>
 
     <p class="text-center text-sm text-slate-600 dark:text-slate-400">
       Já tem conta?
       <a href="{% url 'accounts:login' %}"
-         class="text-lupa-500 hover:text-lupa-600 dark:text-lupa-300 dark:hover:text-white underline">
+         class="text-lupa-500 hover:text-lupa-600 dark:text-lupa-300 dark:hover:text-white
+                underline decoration-lupa-300 underline-offset-2 transition-colors">
         Entrar
       </a>
     </p>

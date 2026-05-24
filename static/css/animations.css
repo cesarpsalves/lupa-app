@@ -1,0 +1,136 @@
+/* LUPA — Estilos de microinterações e animações */
+
+/* ── Smooth scroll global ─────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+/* ── Reduced motion: respeitamos sempre ───────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Focus ring elegante e acessível ──────────────────────── */
+:focus-visible {
+  outline: 2px solid #2c3d8c;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ── Hero fade-up stagger ─────────────────────────────────── */
+.fade-up {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: lupaFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.fade-up-delay-1 { animation-delay: 0.08s; }
+.fade-up-delay-2 { animation-delay: 0.16s; }
+.fade-up-delay-3 { animation-delay: 0.24s; }
+.fade-up-delay-4 { animation-delay: 0.32s; }
+
+@keyframes lupaFadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Card hover lift ─────────────────────────────────────── */
+.card-lift {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -8px rgba(44, 61, 140, 0.18);
+}
+
+/* ── Button press (tap feedback) ──────────────────────────── */
+.btn-press {
+  transition: transform 0.1s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+.btn-press:active {
+  transform: scale(0.97);
+}
+
+/* ── Logo pulse on initial paint ──────────────────────────── */
+.logo-pulse {
+  animation: lupaLogoIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes lupaLogoIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ── Theme toggle: rotação do ícone ──────────────────────── */
+.theme-toggle svg {
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.theme-toggle:hover svg { transform: rotate(15deg); }
+.theme-toggle:active svg { transform: rotate(-15deg) scale(0.9); }
+
+/* ── HTMX loading indicator ──────────────────────────────── */
+.htmx-indicator { opacity: 0; transition: opacity 0.2s ease; }
+.htmx-request .htmx-indicator { opacity: 1; }
+.htmx-request.htmx-indicator { opacity: 1; }
+
+.htmx-request button[type="submit"] { opacity: 0.7; cursor: wait; }
+
+/* ── Spinner ──────────────────────────────────────────────── */
+.lupa-spinner {
+  width: 1rem; height: 1rem;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: lupaSpin 0.6s linear infinite;
+  display: inline-block;
+}
+@keyframes lupaSpin { to { transform: rotate(360deg); } }
+
+/* ── Bottom nav: indicador animado (active) ──────────────── */
+.bottom-nav-item {
+  position: relative;
+  transition: color 0.2s ease;
+}
+.bottom-nav-item[aria-current="page"]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 3px;
+  background: #2c3d8c;
+  border-radius: 0 0 3px 3px;
+  animation: lupaSlideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes lupaSlideDown {
+  from { width: 0; }
+  to { width: 24px; }
+}
+
+/* ── Input erro shake ────────────────────────────────────── */
+.input-error {
+  animation: lupaShake 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes lupaShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+/* ── Page transition (HTMX boost) ────────────────────────── */
+@view-transition { navigation: auto; }
+
+/* ── Min touch target 44×44 (a11y) ───────────────────────── */
+button, a, [role="button"] { min-height: 0; }
+.tap-target { min-width: 44px; min-height: 44px; }
+
+/* ── Selection ───────────────────────────────────────────── */
+::selection {
+  background-color: rgba(44, 61, 140, 0.25);
+  color: inherit;
+}

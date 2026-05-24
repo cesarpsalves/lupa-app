@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}LUPA — Gestão pra prestadores de serviço{% endblock %}
+{% block title %}LUPA Soluções — Gestão pra prestadores de serviço{% endblock %}
 
 {% block content %}
 
@@ -10,55 +10,71 @@
                 bg-[radial-gradient(circle_at_top,_rgba(44,61,140,0.08),_transparent_55%)]
                 dark:bg-[radial-gradient(circle_at_top,_rgba(44,61,140,0.22),_transparent_55%)]"></div>
 
-    <div class="mx-auto max-w-6xl px-4 sm:px-6 pt-16 pb-20 sm:pt-24 sm:pb-28">
-      <p class="text-sm font-medium uppercase tracking-widest text-lupa-500 dark:text-lupa-300/80">
+    {# Hexágono decorativo flutuante #}
+    <div class="absolute top-12 right-4 sm:top-16 sm:right-12 -z-10 opacity-[0.08] dark:opacity-[0.12] pointer-events-none">
+      <svg width="280" height="280" viewBox="0 0 500 500" fill="#2c3d8c" aria-hidden="true">
+        <path d="M 41.5,368.5 C 40.5,290.17 40.1667,211.836 40.5,133.5 C 218,30 280,30 460,135 C 460,290 460,365 460,365 C 280,470 220,470 41.5,368.5 Z"/>
+      </svg>
+    </div>
+
+    <div class="mx-auto max-w-6xl px-4 sm:px-6 pt-12 pb-16 sm:pt-24 sm:pb-28">
+      <p class="fade-up text-xs sm:text-sm font-medium uppercase tracking-widest
+                text-lupa-500 dark:text-lupa-300/80">
         Pra prestadores de serviço
       </p>
-      <h1 class="mt-3 text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight
+      <h1 class="fade-up fade-up-delay-1 mt-3 text-3xl sm:text-5xl lg:text-6xl
+                 font-bold leading-[1.1] tracking-tight
                  text-slate-900 dark:text-white">
         Organize seu negócio<br class="hidden sm:block" />
         <span class="text-lupa-500 dark:text-lupa-300">num só app.</span>
       </h1>
-      <p class="mt-6 max-w-2xl text-lg leading-relaxed
+      <p class="fade-up fade-up-delay-2 mt-5 sm:mt-6 max-w-2xl text-base sm:text-lg leading-relaxed
                 text-slate-600 dark:text-slate-300">
         Agenda, atendimentos, cupons em PDF e caixa &mdash; conectados.
         Sem precisar de planilha, WhatsApp Business e calculadora ao mesmo tempo.
       </p>
 
-      <div class="mt-8 flex flex-col sm:flex-row gap-3">
+      <div class="fade-up fade-up-delay-3 mt-7 sm:mt-8 flex flex-col sm:flex-row gap-3">
         <a href="{% url 'accounts:signup' %}"
-           class="inline-flex items-center justify-center gap-2 rounded-full
-                  bg-lupa-500 px-6 py-3 text-base font-medium text-white
-                  hover:bg-lupa-600 transition-colors shadow-lg shadow-lupa-500/20">
-          Começar grátis &rarr;
+           class="tap-target btn-press inline-flex items-center justify-center gap-2 rounded-full
+                  bg-lupa-500 px-6 py-3.5 text-base font-medium text-white
+                  hover:bg-lupa-600 transition-all shadow-lg shadow-lupa-500/20
+                  hover:shadow-xl hover:shadow-lupa-500/30">
+          Começar grátis
+          <svg class="h-4 w-4 transition-transform group-hover:translate-x-0.5"
+               viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
         </a>
         <a href="#como-funciona"
-           class="inline-flex items-center justify-center gap-2 rounded-full
-                  border px-6 py-3 text-base font-medium transition-colors
+           class="tap-target btn-press inline-flex items-center justify-center gap-2 rounded-full
+                  border px-6 py-3.5 text-base font-medium transition-colors
                   border-slate-300 text-slate-700 hover:bg-slate-100
                   dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-900">
           Ver como funciona
         </a>
       </div>
-      <p class="mt-4 text-sm text-slate-500 dark:text-slate-500">Sem cartão. Plano gratuito real.</p>
+      <p class="fade-up fade-up-delay-4 mt-4 text-sm text-slate-500">Sem cartão. Plano gratuito real.</p>
     </div>
   </section>
 
   {# ─────── Para quem é hoje ─────── #}
-  <section id="para-quem" class="mx-auto max-w-6xl px-4 sm:px-6 pb-20">
+  <section id="para-quem" class="mx-auto max-w-6xl px-4 sm:px-6 pb-16 sm:pb-20">
     <h2 class="text-2xl sm:text-3xl font-semibold text-slate-900 dark:text-white">
       Disponível hoje para
     </h2>
     <p class="mt-2 text-slate-600 dark:text-slate-400">
       Começamos por um nicho pra desenhar o fluxo perfeito. Outros estão a caminho &mdash;
-      <a href="#waitlist" class="underline hover:text-lupa-500 dark:hover:text-white">vote no seu</a>.
+      <a href="#waitlist" class="underline decoration-slate-400 underline-offset-2
+                                  hover:text-lupa-500 dark:hover:text-white transition-colors">vote no seu</a>.
     </p>
 
-    <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="mt-7 sm:mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {% for niche in active_niches %}
-        <article class="rounded-2xl border p-6 transition-colors
-                        border-slate-200 bg-white hover:border-slate-300
-                        dark:border-slate-800 dark:bg-slate-900/50 dark:hover:border-slate-700">
+        <article class="card-lift rounded-2xl border p-6 transition-colors
+                        border-slate-200 bg-white hover:border-lupa-300
+                        dark:border-slate-800 dark:bg-slate-900/50 dark:hover:border-lupa-400">
           <span class="text-3xl" aria-hidden="true">{{ niche.icon }}</span>
           <h3 class="mt-3 text-lg font-semibold text-slate-900 dark:text-white">{{ niche.label }}</h3>
           <p class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400">{{ niche.tagline }}</p>
@@ -71,53 +87,26 @@
   <section id="como-funciona" class="border-y transition-colors
                                      border-slate-200 bg-slate-100/50
                                      dark:border-slate-800/70 dark:bg-slate-900/30">
-    <div class="mx-auto max-w-6xl px-4 sm:px-6 py-20">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6 py-16 sm:py-20">
       <h2 class="text-2xl sm:text-3xl font-semibold text-slate-900 dark:text-white">Como funciona</h2>
       <p class="mt-2 text-slate-600 dark:text-slate-400">Um fluxo claro, do orçamento ao caixa.</p>
 
-      <ol class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <li class="rounded-2xl border p-6
+      <ol class="mt-8 sm:mt-10 grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {% for step in steps %}
+        <li class="card-lift rounded-2xl border p-6
                    border-slate-200 bg-white
                    dark:border-slate-800 dark:bg-slate-950/60">
-          <span class="text-xs font-semibold text-lupa-500 dark:text-lupa-300/70">01</span>
-          <h3 class="mt-2 text-lg font-medium text-slate-900 dark:text-white">Agende</h3>
-          <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">
-            Cadastre cliente, serviço e horário em menos de 1 minuto.
-          </p>
+          <span class="text-xs font-semibold text-lupa-500 dark:text-lupa-300/70">{{ step.number }}</span>
+          <h3 class="mt-2 text-lg font-medium text-slate-900 dark:text-white">{{ step.title }}</h3>
+          <p class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400">{{ step.body }}</p>
         </li>
-        <li class="rounded-2xl border p-6
-                   border-slate-200 bg-white
-                   dark:border-slate-800 dark:bg-slate-950/60">
-          <span class="text-xs font-semibold text-lupa-500 dark:text-lupa-300/70">02</span>
-          <h3 class="mt-2 text-lg font-medium text-slate-900 dark:text-white">Cobre o sinal</h3>
-          <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">
-            Defina a porcentagem padrão. Saldo registrado pra cobrar depois.
-          </p>
-        </li>
-        <li class="rounded-2xl border p-6
-                   border-slate-200 bg-white
-                   dark:border-slate-800 dark:bg-slate-950/60">
-          <span class="text-xs font-semibold text-lupa-500 dark:text-lupa-300/70">03</span>
-          <h3 class="mt-2 text-lg font-medium text-slate-900 dark:text-white">Atenda</h3>
-          <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">
-            Marque como concluído, receba o saldo, gere o cupom em PDF.
-          </p>
-        </li>
-        <li class="rounded-2xl border p-6
-                   border-slate-200 bg-white
-                   dark:border-slate-800 dark:bg-slate-950/60">
-          <span class="text-xs font-semibold text-lupa-500 dark:text-lupa-300/70">04</span>
-          <h3 class="mt-2 text-lg font-medium text-slate-900 dark:text-white">Acompanhe</h3>
-          <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">
-            Caixa atualizado em tempo real. Lucro do mês num toque.
-          </p>
-        </li>
+        {% endfor %}
       </ol>
     </div>
   </section>
 
   {# ─────── Waitlist por nicho ─────── #}
-  <section id="waitlist" class="mx-auto max-w-3xl px-4 sm:px-6 py-20">
+  <section id="waitlist" class="mx-auto max-w-3xl px-4 sm:px-6 py-16 sm:py-20">
     <h2 class="text-2xl sm:text-3xl font-semibold text-slate-900 dark:text-white">
       Seu nicho não está aqui?
     </h2>
@@ -139,7 +128,7 @@
     {% endif %}
 
     <div id="waitlist-card"
-         class="mt-8 rounded-2xl border p-6 transition-colors
+         class="mt-7 rounded-2xl border p-5 sm:p-6 transition-colors
                 border-slate-200 bg-white
                 dark:border-slate-800 dark:bg-slate-900/50">
       {% include "public/_waitlist_form.html" %}
