@@ -4,30 +4,28 @@
                dark:border-slate-800/80 dark:bg-slate-950/85">
   <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 gap-3">
 
-    {# Logo + branding (marca primeiro, empresa secundária) #}
-    <a href="{% url 'app:dashboard' %}"
-       class="flex items-center gap-3 group tap-target -ml-2 px-2 rounded-lg
-              hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors min-w-0">
-      <img src="{% static 'img/logo.svg' %}" alt="LUPA Soluções" class="h-9 w-9 shrink-0" />
-      <span class="flex flex-col leading-none min-w-0">
-        <span class="text-[15px] font-bold tracking-tight
-                     text-slate-900 dark:text-slate-100">
-          LUPA
-        </span>
-        {% if current_company %}
-          <span class="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-[180px]">
+    {# Workspace (empresa) à esquerda — padrão Slack/Linear/Notion #}
+    <a href="{% url 'companies:settings' %}"
+       class="flex items-center gap-3 group tap-target -ml-2 px-2 rounded-lg min-w-0
+              hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors">
+      {% if current_company %}
+        {% include "components/_company_avatar.html" with company=current_company size="md" %}
+        <span class="flex flex-col leading-none min-w-0">
+          <span class="text-[15px] font-semibold tracking-tight truncate max-w-[200px]
+                       text-slate-900 dark:text-slate-100">
             {{ current_company.name }}
           </span>
-        {% else %}
-          <span class="mt-0.5 text-[10px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
-            Soluções
+          <span class="mt-0.5 text-[10px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-500">
+            {{ current_company.get_profile_level_display }}
           </span>
-        {% endif %}
-      </span>
+        </span>
+      {% else %}
+        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Configurar empresa</span>
+      {% endif %}
     </a>
 
     {# Ações #}
-    <div class="flex items-center gap-2" x-data="{ open: false }">
+    <div class="flex items-center gap-2">
 
       {# Tema toggle #}
       <button type="button"
@@ -67,7 +65,7 @@
              x-transition:leave="transition ease-in duration-100"
              x-transition:leave-start="opacity-100 translate-y-0 scale-100"
              x-transition:leave-end="opacity-0 -translate-y-1 scale-95"
-             class="absolute right-0 mt-2 w-60 origin-top-right rounded-xl border p-2 shadow-lg
+             class="absolute right-0 mt-2 w-64 origin-top-right rounded-xl border p-2 shadow-lg
                     border-slate-200 bg-white
                     dark:border-slate-800 dark:bg-slate-900"
              style="display:none">
@@ -76,15 +74,27 @@
             <p class="text-xs text-slate-500 dark:text-slate-400 truncate">{{ user.email }}</p>
           </div>
           <hr class="my-1 border-slate-200 dark:border-slate-800" />
+          <a href="{% url 'companies:settings' %}"
+             class="block px-3 py-2 text-sm rounded-md transition-colors
+                    text-slate-700 hover:bg-slate-100
+                    dark:text-slate-300 dark:hover:bg-slate-800">
+            Configurações da empresa
+          </a>
+          <hr class="my-1 border-slate-200 dark:border-slate-800" />
           <form action="{% url 'accounts:logout' %}" method="post">
             {% csrf_token %}
             <button type="submit"
-                    class="block w-full text-left px-3 py-2 text-sm rounded-md
+                    class="block w-full text-left px-3 py-2 text-sm rounded-md transition-colors
                            text-slate-700 hover:bg-slate-100
-                           dark:text-slate-300 dark:hover:bg-slate-800 transition-colors">
+                           dark:text-slate-300 dark:hover:bg-slate-800">
               Sair
             </button>
           </form>
+          <div class="mt-1 px-3 py-2 border-t border-slate-200 dark:border-slate-800">
+            <p class="text-[10px] text-slate-400 dark:text-slate-500">
+              Powered by <span class="font-semibold text-slate-600 dark:text-slate-300">LUPA Soluções</span>
+            </p>
+          </div>
         </div>
       </div>
     </div>

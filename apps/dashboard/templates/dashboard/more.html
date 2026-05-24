@@ -1,28 +1,34 @@
 {% extends "app_base.html" %}
+{% load static %}
 
 {% block title %}Mais — LUPA Soluções{% endblock %}
 
 {% block content %}
 <section class="page-enter mx-auto max-w-2xl px-4 sm:px-6 py-5 sm:py-10">
 
-  <header class="fade-up">
-    <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Mais</h1>
-    <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
-      {{ current_company.name|default:"Sua empresa" }} &middot; configurações e cadastros.
-    </p>
+  {# Cabeçalho com avatar grande da empresa #}
+  <header class="flex items-center gap-4">
+    {% if current_company %}
+      {% include "components/_company_avatar.html" with company=current_company size="lg" %}
+    {% endif %}
+    <div class="min-w-0">
+      <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white truncate">
+        {{ current_company.name|default:"Sua empresa" }}
+      </h1>
+      <p class="mt-0.5 text-sm text-slate-600 dark:text-slate-400">
+        Configurações e cadastros
+      </p>
+    </div>
   </header>
 
-  <nav class="fade-up fade-up-delay-1 mt-6 sm:mt-8 grid gap-2 sm:gap-3">
-
+  <nav class="mt-6 sm:mt-8 grid gap-2 sm:gap-3">
     {% include "components/_more_item.html" with url='clients:list' label='Clientes' description='Quem você atende' icon='users' available=True %}
     {% include "components/_more_item.html" with url='catalog:list' label='Serviços' description='O que você oferece' icon='briefcase' available=True %}
-    {% include "components/_more_item.html" with url=None label='Empresa' description='Dados, horário, plano' icon='building' available=False %}
+    {% include "components/_more_item.html" with url='companies:settings' label='Empresa' description='Dados, logo, documento' icon='building' available=True %}
     {% include "components/_more_item.html" with url=None label='Privacidade (LGPD)' description='Exportar/excluir dados' icon='shield' available=False %}
-
   </nav>
 
-  <form action="{% url 'accounts:logout' %}" method="post"
-        class="fade-up fade-up-delay-2 mt-6 sm:mt-8">
+  <form action="{% url 'accounts:logout' %}" method="post" class="mt-6 sm:mt-8">
     {% csrf_token %}
     <button type="submit"
             class="tap-target btn-press w-full inline-flex items-center justify-center gap-2 rounded-full
@@ -37,5 +43,15 @@
       Sair
     </button>
   </form>
+
+  {# Powered by LUPA — fica discreto no rodapé do "Mais", a marca do produto não some #}
+  <div class="mt-10 flex items-center justify-center gap-2 text-xs text-slate-400 dark:text-slate-500">
+    <img src="{% static 'img/logo.svg' %}" alt="" class="h-4 w-4 opacity-70" aria-hidden="true" />
+    Powered by
+    <a href="{% url 'public:landing' %}"
+       class="font-semibold text-slate-500 dark:text-slate-400 hover:text-lupa-500 dark:hover:text-white transition-colors">
+      LUPA Soluções
+    </a>
+  </div>
 </section>
 {% endblock %}

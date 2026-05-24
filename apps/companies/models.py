@@ -54,6 +54,10 @@ class NichePreset(TimestampedModel):
         return self.name
 
 
+def _company_logo_path(instance: "Company", filename: str) -> str:
+    return f"companies/{instance.slug}/logo/{filename}"
+
+
 class Company(TimestampedModel):
     """Tenant. Toda informação operacional aponta pra cá via FK."""
 
@@ -65,6 +69,13 @@ class Company(TimestampedModel):
         max_length=2,
         choices=ProfileLevel.choices,
         default=ProfileLevel.L1,
+    )
+    logo = models.ImageField(
+        _("logo"),
+        upload_to=_company_logo_path,
+        blank=True,
+        null=True,
+        help_text="PNG/JPG, idealmente quadrado (≥ 256px). Opcional.",
     )
     settings = models.JSONField(
         default=dict,
@@ -93,6 +104,33 @@ class Company(TimestampedModel):
     @property
     def default_signal_pct(self) -> int:
         return int(self.settings.get("default_signal_pct", settings.LUPA_DEFAULT_SIGNAL_PCT))
+
+    @property
+    def initials(self) -> str:
+        """Iniciais para avatar fallback. Máx 2 letras."""
+        parts = [p for p in self.name.split() if p]
+        if not parts:
+            return "?"
+        if len(parts) == 1:
+            return parts[0][:2].upper()
+        return (parts[0][0] + parts[-1][0]).upper()
+
+    @property
+    def avatar_color(self) -> str:
+        """Cor de fundo determinística baseada no slug (palette fixa)."""
+        palette = [
+            "#2c3d8c",  # lupa
+            "#0f766e",  # teal
+            "#9333ea",  # purple
+            "#0891b2",  # cyan
+            "#c2410c",  # orange
+            "#65a30d",  # lime
+            "#db2777",  # pink
+            "#475569",  # slate
+        ]
+        import hashlib
+        h = hashlib.md5(self.slug.encode()).hexdigest()
+        return palette[int(h[:2], 16) % len(palette)]
 
 
 class Membership(TimestampedModel):

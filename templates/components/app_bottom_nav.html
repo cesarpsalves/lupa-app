@@ -57,9 +57,9 @@
     </li>
     <li>
       <a href="{{ more_url }}"
-         {% if request.path == more_url or "/clientes/" in request.path or "/servicos/" in request.path %}aria-current="page"{% endif %}
+         {% if request.path == more_url or "/clientes/" in request.path or "/servicos/" in request.path or "/empresa/" in request.path %}aria-current="page"{% endif %}
          class="bottom-nav-item flex flex-col items-center justify-center gap-1 py-3 tap-target transition-colors
-                {% if request.path == more_url or '/clientes/' in request.path or '/servicos/' in request.path %}text-lupa-500 dark:text-lupa-300 font-medium{% else %}text-slate-600 dark:text-slate-400 hover:text-lupa-500{% endif %}">
+                {% if request.path == more_url or '/clientes/' in request.path or '/servicos/' in request.path or '/empresa/' in request.path %}text-lupa-500 dark:text-lupa-300 font-medium{% else %}text-slate-600 dark:text-slate-400 hover:text-lupa-500{% endif %}">
         <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
         </svg>

@@ -30,6 +30,9 @@ django-anymail[resend]>=11.1,<12.0
 # ──────────── Documentos / PDF ────────────
 weasyprint>=62.0,<63.0
 
+# ──────────── Imagens (uploads de logo) ────────────
+Pillow>=10.4,<11.0
+
 # ──────────── Tasks ────────────
 django-q2>=1.7,<2.0
 
