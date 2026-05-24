@@ -12,6 +12,8 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 
 from apps.cashflow.models import CashflowDirection, CashflowEntry
+from apps.catalog.models import Service
+from apps.clients.models import Client
 from apps.companies.models import Company, Membership, NichePreset, Role
 from apps.core.tenant import set_current_company
 from apps.payments.models import Payment, PaymentStatus
@@ -89,13 +91,13 @@ def dashboard(request: HttpRequest) -> HttpResponse:
             "today_tickets": today_tickets,
             "week": week,
             "upcoming_features": [
-                "Clientes",
-                "Catálogo",
                 "Agenda",
                 "Atendimentos",
                 "Caixa",
                 "Cupom PDF",
             ],
+            "has_clients": Client.objects.exists(),
+            "has_services": Service.objects.exists(),
         },
     )
 
@@ -105,6 +107,14 @@ def models_trunc_date(field: str):
     from django.db.models.functions import TruncDate
 
     return TruncDate(field)
+
+
+@login_required
+def more_menu(request: HttpRequest) -> HttpResponse:
+    """Menu 'Mais' do app — agrega navegação para áreas secundárias."""
+    if not _has_company(request.user):
+        return redirect("app:onboarding")
+    return render(request, "dashboard/more.html")
 
 
 @login_required

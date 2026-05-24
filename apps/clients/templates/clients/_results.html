@@ -1,0 +1,64 @@
+{% if clients %}
+  <p class="text-xs text-slate-500 dark:text-slate-500 mb-3">
+    {{ total }} resultado{{ total|pluralize:"s" }}{% if q %} para "<span class="text-slate-700 dark:text-slate-300 font-medium">{{ q }}</span>"{% endif %}
+  </p>
+  <ul class="grid gap-2 sm:gap-3">
+    {% for client in clients %}
+      <li class="card-lift">
+        <a href="{% url 'clients:detail' client.pk %}"
+           class="block rounded-xl border p-4 transition-all
+                  border-slate-200 bg-white hover:border-lupa-400
+                  dark:border-slate-800 dark:bg-slate-900/50 dark:hover:border-lupa-400">
+          <div class="flex items-center justify-between gap-3">
+            <div class="min-w-0 flex-1">
+              <p class="text-sm font-semibold text-slate-900 dark:text-white truncate">
+                {{ client.name }}
+              </p>
+              <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400 truncate">
+                {% if client.display_phone %}📱 {{ client.display_phone }}{% endif %}
+                {% if client.display_phone and client.email %}&middot;{% endif %}
+                {% if client.email %}✉️ {{ client.email }}{% endif %}
+                {% if not client.display_phone and not client.email %}<span class="text-slate-400">(sem contato)</span>{% endif %}
+              </p>
+            </div>
+            <svg class="h-5 w-5 text-slate-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </div>
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <div class="rounded-2xl border-2 border-dashed p-8 sm:p-12 text-center
+              border-slate-300 bg-white
+              dark:border-slate-700 dark:bg-slate-900/30">
+    <div class="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full
+                bg-lupa-500/10 text-lupa-500 dark:text-lupa-300 text-2xl">
+      👥
+    </div>
+    <p class="mt-4 text-sm font-medium text-slate-900 dark:text-white">
+      {% if q %}Nenhum cliente encontrado{% else %}Nenhum cliente ainda{% endif %}
+    </p>
+    <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+      {% if q %}
+        Tente outro termo ou
+        <a href="{% url 'clients:create' %}" class="text-lupa-500 underline">cadastre um novo</a>.
+      {% else %}
+        Comece cadastrando seu primeiro cliente — leva 10 segundos.
+      {% endif %}
+    </p>
+    {% if not q %}
+      <a href="{% url 'clients:create' %}"
+         class="tap-target btn-press mt-5 inline-flex items-center gap-2 rounded-full
+                bg-lupa-500 px-5 py-2.5 text-sm font-medium text-white
+                hover:bg-lupa-600 transition-all shadow-sm">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        Cadastrar primeiro cliente
+      </a>
+    {% endif %}
+  </div>
+{% endif %}

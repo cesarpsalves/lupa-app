@@ -1,0 +1,59 @@
+{# Item da página Mais. Espera: url (string url-name ou None), label, description, icon (slug), available (bool) #}
+{% if available %}
+  <a href="{% url url %}"
+     class="card-lift flex items-center gap-4 rounded-xl border p-4 transition-all
+            border-slate-200 bg-white hover:border-lupa-400
+            dark:border-slate-800 dark:bg-slate-900/50 dark:hover:border-lupa-400">
+{% else %}
+  <div class="flex items-center gap-4 rounded-xl border p-4 opacity-60 cursor-not-allowed
+              border-slate-200 bg-slate-50
+              dark:border-slate-800 dark:bg-slate-900/30"
+       aria-disabled="true" title="Em breve">
+{% endif %}
+
+  <span class="grid h-11 w-11 shrink-0 place-items-center rounded-lg
+               bg-lupa-500/10 text-lupa-500 dark:text-lupa-300">
+    {% if icon == 'users' %}
+      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+    {% elif icon == 'briefcase' %}
+      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="2" y="7" width="20" height="14" rx="2"/>
+        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+      </svg>
+    {% elif icon == 'building' %}
+      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/>
+      </svg>
+    {% elif icon == 'shield' %}
+      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+    {% endif %}
+  </span>
+
+  <div class="min-w-0 flex-1">
+    <p class="text-sm font-semibold text-slate-900 dark:text-white">
+      {{ label }}
+      {% if not available %}
+        <span class="ml-1 text-[10px] uppercase tracking-wider text-slate-400">em breve</span>
+      {% endif %}
+    </p>
+    <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{{ description }}</p>
+  </div>
+
+  {% if available %}
+    <svg class="h-5 w-5 text-slate-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M9 18l6-6-6-6"/>
+    </svg>
+  {% endif %}
+
+{% if available %}
+  </a>
+{% else %}
+  </div>
+{% endif %}

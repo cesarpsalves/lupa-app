@@ -1,0 +1,164 @@
+{% extends "app_base.html" %}
+
+{% block title %}
+  {% if mode == 'update' %}Editar {{ client.name }}{% else %}Novo cliente{% endif %} — LUPA Soluções
+{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-xl px-4 sm:px-6 py-5 sm:py-10">
+
+  <a href="{% if mode == 'update' %}{% url 'clients:detail' client.pk %}{% else %}{% url 'clients:list' %}{% endif %}"
+     class="inline-flex items-center gap-1.5 text-sm text-slate-600 hover:text-lupa-500
+            dark:text-slate-400 dark:hover:text-white transition-colors">
+    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M19 12H5M12 19l-7-7 7-7"/>
+    </svg>
+    Voltar
+  </a>
+
+  <h1 class="fade-up mt-3 text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+    {% if mode == 'update' %}Editar cliente{% else %}Novo cliente{% endif %}
+  </h1>
+  <p class="fade-up fade-up-delay-1 mt-1 text-sm text-slate-600 dark:text-slate-400">
+    Só o nome é obrigatório. Você pode preencher o resto depois.
+  </p>
+
+  <form method="post" novalidate
+        class="fade-up fade-up-delay-2 mt-6 sm:mt-8 grid gap-5 rounded-2xl border p-5 sm:p-6 shadow-sm
+               border-slate-200 bg-white
+               dark:border-slate-800 dark:bg-slate-900/50">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <div role="alert" class="rounded-lg border px-4 py-3 text-sm
+                  border-red-300 bg-red-50 text-red-800
+                  dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-200">
+        {{ form.non_field_errors|join:" " }}
+      </div>
+    {% endif %}
+
+    {# Nome #}
+    <div>
+      <label for="id_name" class="block text-sm font-medium text-slate-700 dark:text-slate-200">
+        Nome <span class="text-red-500">*</span>
+      </label>
+      <input type="text" id="id_name" name="name" required autofocus maxlength="120"
+             autocomplete="name"
+             value="{{ form.name.value|default:'' }}"
+             placeholder="Como o cliente quer ser chamado"
+             class="mt-1.5 block w-full rounded-lg shadow-sm transition-colors
+                    border-slate-300 bg-white text-slate-900 placeholder-slate-400
+                    focus:border-lupa-500 focus:ring-2 focus:ring-lupa-500/40
+                    dark:border-slate-700 dark:bg-slate-950/60 dark:text-white dark:placeholder-slate-500" />
+      {% if form.name.errors %}
+        <p class="mt-1.5 text-sm text-red-600 dark:text-red-400">{{ form.name.errors|join:" " }}</p>
+      {% endif %}
+    </div>
+
+    {# Telefone com máscara #}
+    <div>
+      <label for="id_phone" class="block text-sm font-medium text-slate-700 dark:text-slate-200">
+        {{ form.phone.label }}
+        <span class="text-slate-400 dark:text-slate-500 font-normal">(opcional)</span>
+      </label>
+      <input type="tel" id="id_phone" name="phone"
+             value="{{ form.phone.value|default:'' }}"
+             data-mask="phone" inputmode="numeric" autocomplete="tel-national"
+             maxlength="15" placeholder="(11) 91234-5678"
+             class="mt-1.5 block w-full rounded-lg shadow-sm transition-colors
+                    border-slate-300 bg-white text-slate-900 placeholder-slate-400
+                    focus:border-lupa-500 focus:ring-2 focus:ring-lupa-500/40
+                    dark:border-slate-700 dark:bg-slate-950/60 dark:text-white dark:placeholder-slate-500" />
+      <p data-mask-error="id_phone"
+         class="hidden mt-1.5 text-sm text-red-600 dark:text-red-400"
+         aria-live="polite"></p>
+      {% if form.phone.errors %}
+        <p class="mt-1.5 text-sm text-red-600 dark:text-red-400">{{ form.phone.errors|join:" " }}</p>
+      {% endif %}
+    </div>
+
+    {# Email #}
+    <div>
+      <label for="id_email" class="block text-sm font-medium text-slate-700 dark:text-slate-200">
+        Email
+        <span class="text-slate-400 dark:text-slate-500 font-normal">(opcional)</span>
+      </label>
+      <input type="email" id="id_email" name="email" autocomplete="email"
+             value="{{ form.email.value|default:'' }}"
+             placeholder="opcional@email.com"
+             class="mt-1.5 block w-full rounded-lg shadow-sm transition-colors
+                    border-slate-300 bg-white text-slate-900 placeholder-slate-400
+                    focus:border-lupa-500 focus:ring-2 focus:ring-lupa-500/40
+                    dark:border-slate-700 dark:bg-slate-950/60 dark:text-white dark:placeholder-slate-500" />
+      {% if form.email.errors %}
+        <p class="mt-1.5 text-sm text-red-600 dark:text-red-400">{{ form.email.errors|join:" " }}</p>
+      {% endif %}
+    </div>
+
+    {# CPF/CNPJ com máscara #}
+    <div>
+      <label for="id_document" class="block text-sm font-medium text-slate-700 dark:text-slate-200">
+        CPF/CNPJ
+        <span class="text-slate-400 dark:text-slate-500 font-normal">(opcional)</span>
+      </label>
+      <input type="text" id="id_document" name="document"
+             value="{{ form.document.value|default:'' }}"
+             data-mask="doc" inputmode="numeric" autocomplete="off"
+             maxlength="18" placeholder="000.000.000-00 ou 00.000.000/0000-00"
+             class="mt-1.5 block w-full rounded-lg shadow-sm transition-colors
+                    border-slate-300 bg-white text-slate-900 placeholder-slate-400
+                    focus:border-lupa-500 focus:ring-2 focus:ring-lupa-500/40
+                    dark:border-slate-700 dark:bg-slate-950/60 dark:text-white dark:placeholder-slate-500" />
+      <p data-mask-error="id_document"
+         class="hidden mt-1.5 text-sm text-red-600 dark:text-red-400"
+         aria-live="polite"></p>
+      <p class="mt-1.5 text-xs text-slate-500 dark:text-slate-500">
+        Pra emitir cupom ou nota fiscal no futuro. Validamos os dígitos.
+      </p>
+      {% if form.document.errors %}
+        <p class="mt-1.5 text-sm text-red-600 dark:text-red-400">{{ form.document.errors|join:" " }}</p>
+      {% endif %}
+    </div>
+
+    {# Observações #}
+    <div>
+      <label for="id_notes" class="block text-sm font-medium text-slate-700 dark:text-slate-200">
+        Observações
+        <span class="text-slate-400 dark:text-slate-500 font-normal">(opcional)</span>
+      </label>
+      <textarea id="id_notes" name="notes" rows="3"
+                placeholder="Preferências, restrições, ponto de referência..."
+                class="mt-1.5 block w-full rounded-lg shadow-sm transition-colors
+                       border-slate-300 bg-white text-slate-900 placeholder-slate-400
+                       focus:border-lupa-500 focus:ring-2 focus:ring-lupa-500/40
+                       dark:border-slate-700 dark:bg-slate-950/60 dark:text-white dark:placeholder-slate-500"
+      >{{ form.notes.value|default:'' }}</textarea>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-3">
+      <button type="submit"
+              class="tap-target btn-press inline-flex flex-1 items-center justify-center gap-2 rounded-full
+                     bg-lupa-500 px-6 py-3.5 text-base font-medium text-white
+                     hover:bg-lupa-600 active:scale-95 transition-all
+                     shadow-lg shadow-lupa-500/20 hover:shadow-xl hover:shadow-lupa-500/30">
+        {% if mode == 'update' %}Salvar alterações{% else %}Cadastrar cliente{% endif %}
+      </button>
+      {% if mode == 'update' %}
+        <form action="{% url 'clients:delete' client.pk %}" method="post"
+              onsubmit="return confirm('Arquivar este cliente? O histórico fica preservado.')"
+              class="inline-flex">
+          {% csrf_token %}
+          <button type="submit"
+                  class="tap-target btn-press inline-flex items-center justify-center gap-2 rounded-full
+                         border px-5 py-3.5 text-sm font-medium transition-colors
+                         border-red-200 text-red-600 hover:bg-red-50
+                         dark:border-red-900/40 dark:text-red-400 dark:hover:bg-red-950/30">
+            Arquivar
+          </button>
+        </form>
+      {% endif %}
+    </div>
+  </form>
+</section>
+{% endblock %}

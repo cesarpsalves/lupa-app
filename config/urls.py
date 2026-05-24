@@ -12,6 +12,8 @@ urlpatterns = [
     path("", include("apps.public.urls", namespace="public")),
     path("contas/", include("apps.accounts.urls", namespace="accounts")),
     path("app/", include("apps.dashboard.urls", namespace="app")),
+    path("app/clientes/", include("apps.clients.urls", namespace="clients")),
+    path("app/servicos/", include("apps.catalog.urls", namespace="catalog")),
     path(
         "healthz",
         TemplateView.as_view(template_name="healthz.txt", content_type="text/plain"),

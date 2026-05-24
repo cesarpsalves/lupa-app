@@ -9,4 +9,5 @@ app_name = "app"
 urlpatterns = [
     path("", views.dashboard, name="dashboard"),
     path("onboarding/", views.onboarding, name="onboarding"),
+    path("mais/", views.more_menu, name="more"),
 ]

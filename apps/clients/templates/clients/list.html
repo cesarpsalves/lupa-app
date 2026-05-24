@@ -1,0 +1,63 @@
+{% extends "app_base.html" %}
+
+{% block title %}Clientes — LUPA Soluções{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-6xl px-4 sm:px-6 py-5 sm:py-10">
+
+  <header class="fade-up flex items-start justify-between gap-3 flex-wrap">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+        Clientes
+      </h1>
+      <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+        Quem você atende. Soft delete = arquivado, histórico preservado.
+      </p>
+    </div>
+    <a href="{% url 'clients:create' %}"
+       class="tap-target btn-press inline-flex items-center gap-2 rounded-full
+              bg-lupa-500 px-5 py-2.5 text-sm font-medium text-white
+              hover:bg-lupa-600 active:scale-95 transition-all
+              shadow-sm hover:shadow-md hover:shadow-lupa-500/20">
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 5v14M5 12h14"/>
+      </svg>
+      Novo cliente
+    </a>
+  </header>
+
+  {# Busca HTMX em tempo real #}
+  <div class="fade-up fade-up-delay-1 mt-6 sm:mt-8">
+    <label for="client-search" class="sr-only">Buscar cliente</label>
+    <div class="relative">
+      <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <svg class="h-5 w-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+        </svg>
+      </span>
+      <input id="client-search" type="search" name="q" value="{{ q }}"
+             placeholder="Buscar por nome, telefone, email ou CPF/CNPJ"
+             autocomplete="off"
+             hx-get="{% url 'clients:list' %}"
+             hx-target="#client-results"
+             hx-trigger="input changed delay:300ms, search"
+             hx-push-url="true"
+             class="block w-full rounded-full shadow-sm pl-10 pr-12 py-2.5
+                    border-slate-300 bg-white text-slate-900 placeholder-slate-400
+                    focus:border-lupa-500 focus:ring-2 focus:ring-lupa-500/40
+                    dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder-slate-500
+                    transition-colors" />
+      <span class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none htmx-indicator">
+        <span class="lupa-spinner text-slate-400"></span>
+      </span>
+    </div>
+  </div>
+
+  <div id="client-results" class="fade-up fade-up-delay-2 mt-4 sm:mt-6">
+    {% include "clients/_results.html" %}
+  </div>
+
+</section>
+{% endblock %}

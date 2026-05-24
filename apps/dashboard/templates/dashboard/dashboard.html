@@ -64,15 +64,31 @@
         <p class="text-[11px] sm:text-xs font-medium uppercase tracking-wider
                   text-lupa-600 dark:text-lupa-200">Próximo passo</p>
         <p class="mt-2 text-sm sm:text-base font-semibold text-slate-900 dark:text-white">
-          Cadastre seu 1º cliente
+          {% if not has_clients %}Cadastre seu 1º cliente
+          {% elif not has_services %}Cadastre um serviço
+          {% else %}Crie um atendimento{% endif %}
         </p>
       </div>
-      <button type="button" disabled
-              class="tap-target mt-3 inline-flex items-center justify-center gap-2 rounded-full bg-lupa-500
-                     px-4 py-2 text-sm font-medium text-white opacity-60 cursor-not-allowed"
-              title="Em breve">
-        + Novo
-      </button>
+      {% if not has_clients %}
+        <a href="{% url 'clients:create' %}"
+           class="tap-target btn-press mt-3 inline-flex items-center justify-center gap-2 rounded-full bg-lupa-500
+                  px-4 py-2 text-sm font-medium text-white hover:bg-lupa-600 transition-colors">
+          + Cliente
+        </a>
+      {% elif not has_services %}
+        <a href="{% url 'catalog:create' %}"
+           class="tap-target btn-press mt-3 inline-flex items-center justify-center gap-2 rounded-full bg-lupa-500
+                  px-4 py-2 text-sm font-medium text-white hover:bg-lupa-600 transition-colors">
+          + Serviço
+        </a>
+      {% else %}
+        <button type="button" disabled
+                class="tap-target mt-3 inline-flex items-center justify-center gap-2 rounded-full bg-lupa-500
+                       px-4 py-2 text-sm font-medium text-white opacity-60 cursor-not-allowed"
+                title="Em breve">
+          + Novo
+        </button>
+      {% endif %}
     </article>
   </div>
 

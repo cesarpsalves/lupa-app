@@ -1,0 +1,144 @@
+{% extends "app_base.html" %}
+
+{% block title %}Serviços — LUPA Soluções{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-6xl px-4 sm:px-6 py-5 sm:py-10">
+
+  <header class="fade-up flex items-start justify-between gap-3 flex-wrap">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+        Serviços
+      </h1>
+      <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+        O que você oferece. Inativos não aparecem na criação de atendimentos.
+      </p>
+    </div>
+    <a href="{% url 'catalog:create' %}"
+       class="tap-target btn-press inline-flex items-center gap-2 rounded-full
+              bg-lupa-500 px-5 py-2.5 text-sm font-medium text-white
+              hover:bg-lupa-600 active:scale-95 transition-all
+              shadow-sm hover:shadow-md hover:shadow-lupa-500/20">
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 5v14M5 12h14"/>
+      </svg>
+      Novo serviço
+    </a>
+  </header>
+
+  <div class="fade-up fade-up-delay-1 mt-5 flex items-center gap-2 text-xs">
+    {% if show_archived %}
+      <a href="{% url 'catalog:list' %}"
+         class="rounded-full px-3 py-1 border
+                border-slate-300 text-slate-600 hover:bg-slate-100
+                dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-900 transition-colors">
+        ← Ver só os ativos
+      </a>
+    {% else %}
+      <a href="{% url 'catalog:list' %}?archived=1"
+         class="rounded-full px-3 py-1 border
+                border-slate-300 text-slate-600 hover:bg-slate-100
+                dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-900 transition-colors">
+        Ver arquivados também
+      </a>
+    {% endif %}
+    <span class="text-slate-400 dark:text-slate-500">{{ total }} resultado{{ total|pluralize:"s" }}</span>
+  </div>
+
+  {% if services %}
+    <ul class="fade-up fade-up-delay-2 mt-5 sm:mt-6 grid gap-2 sm:gap-3 sm:grid-cols-2">
+      {% for service in services %}
+        <li class="card-lift rounded-xl border p-4 transition-all
+                   {% if service.is_active %}
+                     border-slate-200 bg-white
+                     dark:border-slate-800 dark:bg-slate-900/50
+                   {% else %}
+                     border-slate-200 bg-slate-50 opacity-70
+                     dark:border-slate-800 dark:bg-slate-900/30
+                   {% endif %}">
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0 flex-1">
+              <p class="text-sm font-semibold text-slate-900 dark:text-white truncate">
+                {{ service.name }}
+                {% if not service.is_active %}
+                  <span class="ml-1 rounded-full px-2 py-0.5 text-[10px] uppercase tracking-wider
+                               bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400">
+                    arquivado
+                  </span>
+                {% endif %}
+              </p>
+              <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                R$ {{ service.base_price|floatformat:2 }} &middot;
+                {{ service.duration_minutes }} min
+              </p>
+              {% if service.description %}
+                <p class="mt-2 text-xs text-slate-600 dark:text-slate-400 line-clamp-2">
+                  {{ service.description }}
+                </p>
+              {% endif %}
+            </div>
+            <div class="flex flex-col gap-1.5 shrink-0">
+              <a href="{% url 'catalog:update' service.pk %}"
+                 class="tap-target inline-flex h-9 w-9 items-center justify-center rounded-full
+                        text-slate-500 hover:bg-slate-100 hover:text-lupa-500
+                        dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-white
+                        transition-colors"
+                 aria-label="Editar {{ service.name }}">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+              </a>
+              <form action="{% url 'catalog:toggle_active' service.pk %}" method="post">
+                {% csrf_token %}
+                <button type="submit"
+                        class="tap-target inline-flex h-9 w-9 items-center justify-center rounded-full
+                               text-slate-500 hover:bg-slate-100
+                               dark:text-slate-400 dark:hover:bg-slate-900 transition-colors"
+                        aria-label="{% if service.is_active %}Arquivar{% else %}Reativar{% endif %} {{ service.name }}">
+                  {% if service.is_active %}
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/>
+                    </svg>
+                  {% else %}
+                    <svg class="h-4 w-4 text-emerald-600 dark:text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                      <path d="M9 11l3 3L22 4"/>
+                    </svg>
+                  {% endif %}
+                </button>
+              </form>
+            </div>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="fade-up fade-up-delay-2 mt-6 sm:mt-8 rounded-2xl border-2 border-dashed p-8 sm:p-12 text-center
+                border-slate-300 bg-white
+                dark:border-slate-700 dark:bg-slate-900/30">
+      <div class="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full
+                  bg-lupa-500/10 text-lupa-500 dark:text-lupa-300 text-2xl">
+        🛍
+      </div>
+      <p class="mt-4 text-sm font-medium text-slate-900 dark:text-white">
+        Nenhum serviço cadastrado{% if show_archived %} (nem arquivado){% endif %}.
+      </p>
+      <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+        Cadastre os serviços que você presta — você pode editar preços depois.
+      </p>
+      <a href="{% url 'catalog:create' %}"
+         class="tap-target btn-press mt-5 inline-flex items-center gap-2 rounded-full
+                bg-lupa-500 px-5 py-2.5 text-sm font-medium text-white
+                hover:bg-lupa-600 transition-all shadow-sm">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        Cadastrar primeiro serviço
+      </a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}
