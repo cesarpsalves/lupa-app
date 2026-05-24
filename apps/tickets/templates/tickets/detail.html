@@ -1,0 +1,190 @@
+{% extends "app_base.html" %}
+
+{% block title %}{{ ticket.code }} — LUPA Soluções{% endblock %}
+
+{% block content %}
+<section class="page-enter mx-auto max-w-3xl px-4 sm:px-6 py-5 sm:py-10">
+
+  <a href="{% url 'tickets:list' %}"
+     class="inline-flex items-center gap-1.5 text-sm text-slate-600 hover:text-lupa-500
+            dark:text-slate-400 dark:hover:text-white transition-colors">
+    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M19 12H5M12 19l-7-7 7-7"/>
+    </svg>
+    Atendimentos
+  </a>
+
+  <header class="mt-3 flex items-start justify-between gap-3 flex-wrap">
+    <div>
+      <p class="text-xs font-mono text-slate-500 dark:text-slate-500">{{ ticket.code }}</p>
+      <h1 class="mt-1 text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+        {{ ticket.client.name }}
+      </h1>
+      <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+        {% if ticket.scheduled_at %}
+          📅 {{ ticket.scheduled_at|date:"l, j \d\e F" }} às {{ ticket.scheduled_at|time:"H:i" }}
+          ({{ ticket.duration_minutes }}min)
+        {% else %}
+          Sem data marcada
+        {% endif %}
+      </p>
+      {% if ticket.location %}
+        <p class="mt-0.5 text-sm text-slate-600 dark:text-slate-400">📍 {{ ticket.location }}</p>
+      {% endif %}
+    </div>
+    <span class="rounded-full px-3 py-1 text-xs font-medium uppercase tracking-wider
+                 {% if ticket.status == 'finalized' %}bg-emerald-500/10 text-emerald-700 dark:text-emerald-300
+                 {% elif ticket.status == 'cancelled' %}bg-red-500/10 text-red-700 dark:text-red-300
+                 {% elif ticket.status == 'in_progress' %}bg-blue-500/10 text-blue-700 dark:text-blue-300
+                 {% else %}bg-lupa-500/10 text-lupa-700 dark:text-lupa-300{% endif %}">
+      {{ ticket.get_status_display }}
+    </span>
+  </header>
+
+  {# Itens #}
+  <section class="mt-6 sm:mt-8 rounded-2xl border overflow-hidden
+                  border-slate-200 bg-white
+                  dark:border-slate-800 dark:bg-slate-900/60">
+    <div class="px-5 py-3 border-b border-slate-100 dark:border-slate-800">
+      <h2 class="text-sm font-semibold text-slate-900 dark:text-white">Serviços</h2>
+    </div>
+    <ul class="divide-y divide-slate-100 dark:divide-slate-800">
+      {% for item in ticket.items.all %}
+        <li class="flex items-center justify-between gap-3 px-5 py-3">
+          <span class="text-sm text-slate-900 dark:text-white">{{ item.description }}</span>
+          <span class="text-sm font-medium text-slate-900 dark:text-white">R$ {{ item.total|floatformat:2 }}</span>
+        </li>
+      {% endfor %}
+      <li class="flex items-center justify-between gap-3 px-5 py-3 text-sm text-slate-500 dark:text-slate-400">
+        <span>Subtotal</span><span>R$ {{ ticket.subtotal|floatformat:2 }}</span>
+      </li>
+      {% if ticket.discount %}
+        <li class="flex items-center justify-between gap-3 px-5 py-3 text-sm text-slate-500 dark:text-slate-400">
+          <span>Desconto</span><span>−R$ {{ ticket.discount|floatformat:2 }}</span>
+        </li>
+      {% endif %}
+      <li class="flex items-center justify-between gap-3 px-5 py-3 bg-slate-50 dark:bg-slate-900/40">
+        <span class="text-sm font-bold text-slate-900 dark:text-white">Total</span>
+        <span class="text-base font-bold text-slate-900 dark:text-white">R$ {{ ticket.total|floatformat:2 }}</span>
+      </li>
+    </ul>
+  </section>
+
+  {# Pagamentos #}
+  <section class="mt-6 sm:mt-8 rounded-2xl border overflow-hidden
+                  border-slate-200 bg-white
+                  dark:border-slate-800 dark:bg-slate-900/60">
+    <div class="px-5 py-3 border-b border-slate-100 dark:border-slate-800">
+      <h2 class="text-sm font-semibold text-slate-900 dark:text-white">Pagamentos</h2>
+    </div>
+    {% if ticket.payments.all %}
+      <ul class="divide-y divide-slate-100 dark:divide-slate-800">
+        {% for p in ticket.payments.all %}
+          <li class="flex items-center justify-between gap-3 px-5 py-3">
+            <div>
+              <p class="text-sm font-medium text-slate-900 dark:text-white">
+                {{ p.get_kind_display }} — R$ {{ p.amount|floatformat:2 }}
+              </p>
+              <p class="text-xs text-slate-500 dark:text-slate-400">
+                {% if p.status == 'paid' %}
+                  ✓ Pago em {{ p.paid_at|date:"d/m/Y H:i" }}
+                  {% if p.method %}&middot; {{ p.get_method_display }}{% endif %}
+                {% elif p.due_date %}
+                  Vence em {{ p.due_date|date:"d/m/Y" }}
+                {% endif %}
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider
+                           {% if p.status == 'paid' %}bg-emerald-500/10 text-emerald-700 dark:text-emerald-300
+                           {% elif p.status == 'cancelled' %}bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400
+                           {% else %}bg-amber-500/10 text-amber-700 dark:text-amber-300{% endif %}">
+                {{ p.get_status_display }}
+              </span>
+              {% if p.status == 'pending' %}
+                <form action="{% url 'tickets:payment_mark_paid' p.pk %}" method="post">
+                  {% csrf_token %}
+                  <button type="submit"
+                          class="text-xs font-medium text-lupa-500 hover:text-lupa-600 transition-colors">
+                    Marcar pago
+                  </button>
+                </form>
+              {% endif %}
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="px-5 py-6 text-sm text-slate-500 dark:text-slate-400 text-center">
+        Nenhum pagamento registrado.
+      </p>
+    {% endif %}
+  </section>
+
+  {# Ações de status #}
+  {% if allowed_transitions %}
+    <section class="mt-6 sm:mt-8 rounded-2xl border p-5
+                    border-slate-200 bg-white
+                    dark:border-slate-800 dark:bg-slate-900/60">
+      <h2 class="text-sm font-semibold text-slate-900 dark:text-white">Próximo passo</h2>
+      <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+        Avance o status conforme o atendimento progride.
+      </p>
+      <div class="mt-4 flex flex-wrap gap-2">
+        {% for to_status in allowed_transitions %}
+          <form action="{% url 'tickets:transition' ticket.pk %}" method="post" class="inline">
+            {% csrf_token %}
+            <input type="hidden" name="to" value="{{ to_status }}" />
+            <button type="submit"
+                    class="tap-target btn-press inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors
+                           {% if to_status == 'cancelled' %}
+                             border border-red-200 text-red-600 hover:bg-red-50
+                             dark:border-red-900/40 dark:text-red-400 dark:hover:bg-red-950/30
+                           {% else %}
+                             bg-lupa-500 text-white hover:bg-lupa-600
+                           {% endif %}"
+                    onclick="{% if to_status == 'cancelled' %}return confirm('Cancelar este atendimento?'){% endif %}">
+              {% if to_status == 'confirmed' %}→ Confirmar
+              {% elif to_status == 'in_progress' %}▶ Iniciar
+              {% elif to_status == 'completed' %}✓ Concluir
+              {% elif to_status == 'finalized' %}🔒 Finalizar
+              {% elif to_status == 'cancelled' %}✕ Cancelar
+              {% endif %}
+            </button>
+          </form>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  {# Notas #}
+  {% if ticket.notes %}
+    <section class="mt-6 sm:mt-8 rounded-2xl border p-5
+                    border-slate-200 bg-white
+                    dark:border-slate-800 dark:bg-slate-900/60">
+      <h2 class="text-sm font-semibold text-slate-900 dark:text-white">Observações</h2>
+      <p class="mt-2 text-sm whitespace-pre-line text-slate-700 dark:text-slate-300">{{ ticket.notes }}</p>
+    </section>
+  {% endif %}
+
+  {# Histórico #}
+  {% if ticket.status_logs.all %}
+    <section class="mt-6 sm:mt-8 rounded-2xl border p-5
+                    border-slate-200 bg-white
+                    dark:border-slate-800 dark:bg-slate-900/60">
+      <h2 class="text-sm font-semibold text-slate-900 dark:text-white">Histórico</h2>
+      <ol class="mt-3 space-y-2 text-xs text-slate-500 dark:text-slate-400">
+        {% for log in ticket.status_logs.all|slice:":10" %}
+          <li>
+            <span class="font-medium text-slate-700 dark:text-slate-300">{{ log.from_status }} → {{ log.to_status }}</span>
+            &middot; {{ log.created_at|date:"d/m H:i" }}
+            {% if log.user %}por {{ log.user.display_name }}{% endif %}
+          </li>
+        {% endfor %}
+      </ol>
+    </section>
+  {% endif %}
+
+</section>
+{% endblock %}

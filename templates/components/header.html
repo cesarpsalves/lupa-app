@@ -36,12 +36,9 @@
     {# Ações + tema #}
     <div class="flex items-center gap-2 sm:gap-3" x-data="{ open: false }">
 
-      {# Tema toggle (44×44 tap area) #}
+      {# Tema toggle (44×44 tap area) — onclick puro #}
       <button type="button"
-              @click="
-                const isDark = document.documentElement.classList.toggle('dark');
-                localStorage.setItem('lupa-theme', isDark ? 'dark' : 'light');
-              "
+              onclick="const isDark = document.documentElement.classList.toggle('dark'); localStorage.setItem('lupa-theme', isDark ? 'dark' : 'light');"
               aria-label="Alternar tema claro/escuro"
               class="theme-toggle tap-target grid h-11 w-11 place-items-center rounded-full
                      border border-slate-200 hover:bg-slate-100 active:scale-95

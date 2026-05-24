@@ -1,0 +1,89 @@
+{% extends "app_base.html" %}
+
+{% block title %}Agenda — LUPA Soluções{% endblock %}
+
+{% block content %}
+<section class="page-enter mx-auto max-w-6xl px-4 sm:px-6 py-5 sm:py-10">
+
+  <header class="flex items-start justify-between gap-3 flex-wrap">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+        Agenda
+      </h1>
+      <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+        Semana de {{ start|date:"j \d\e F" }} a {{ end|date:"j \d\e F" }}
+      </p>
+    </div>
+    <div class="flex items-center gap-1 rounded-full border p-1
+                border-slate-200 bg-white
+                dark:border-slate-800 dark:bg-slate-900">
+      <a href="{% url 'scheduling:day' %}"
+         class="px-3 py-1.5 text-xs font-medium rounded-full text-slate-600 hover:text-slate-900
+                dark:text-slate-400 dark:hover:text-white transition-colors">
+        Dia
+      </a>
+      <a href="?d={{ start|date:'Y-m-d' }}"
+         class="px-3 py-1.5 text-xs font-medium rounded-full bg-lupa-500 text-white">
+        Semana
+      </a>
+    </div>
+  </header>
+
+  <nav class="mt-5 flex items-center justify-between gap-2">
+    <a href="?d={{ prev_week|date:'Y-m-d' }}"
+       class="tap-target btn-press inline-flex h-10 px-3 items-center justify-center gap-1 rounded-full
+              border border-slate-200 hover:bg-slate-100 text-sm
+              dark:border-slate-800 dark:hover:bg-slate-900 transition-colors">
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+      Anterior
+    </a>
+    <a href="?d={{ today|date:'Y-m-d' }}"
+       class="text-xs text-lupa-500 hover:underline">
+      Esta semana
+    </a>
+    <a href="?d={{ next_week|date:'Y-m-d' }}"
+       class="tap-target btn-press inline-flex h-10 px-3 items-center justify-center gap-1 rounded-full
+              border border-slate-200 hover:bg-slate-100 text-sm
+              dark:border-slate-800 dark:hover:bg-slate-900 transition-colors">
+      Próxima
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M9 18l6-6-6-6"/>
+      </svg>
+    </a>
+  </nav>
+
+  <div class="mt-6 grid grid-cols-7 gap-2 sm:gap-3">
+    {% for d in days %}
+      <a href="{% url 'scheduling:day' %}?d={{ d.date|date:'Y-m-d' }}"
+         class="card-lift rounded-xl border p-3 transition-all min-h-[140px]
+                {% if d.is_today %}border-lupa-500 bg-lupa-500/5 dark:bg-lupa-500/10{% else %}border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900/60{% endif %}">
+        <p class="text-[9px] sm:text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          {{ d.date|date:"D"|slice:":3" }}
+        </p>
+        <p class="mt-1 text-lg font-bold {% if d.is_today %}text-lupa-600 dark:text-lupa-300{% else %}text-slate-900 dark:text-white{% endif %}">
+          {{ d.date|date:"d" }}
+        </p>
+        <p class="mt-1 text-[10px] {% if d.events %}text-lupa-500 dark:text-lupa-300 font-medium{% else %}text-slate-400 dark:text-slate-600{% endif %}">
+          {{ d.events|length }} ag.
+        </p>
+        <ul class="mt-2 space-y-1 hidden sm:block">
+          {% for item in d.events|slice:":3" %}
+            <li class="text-[10px] truncate text-slate-600 dark:text-slate-400">
+              <span class="font-medium">{{ item.local_time|time:"H:i" }}</span>
+              {{ item.event.ticket.client.name|default:item.event.title }}
+            </li>
+          {% endfor %}
+          {% if d.events|length > 3 %}
+            <li class="text-[10px] text-slate-400 dark:text-slate-600">
+              +{{ d.events|length|add:"-3" }} mais
+            </li>
+          {% endif %}
+        </ul>
+      </a>
+    {% endfor %}
+  </div>
+
+</section>
+{% endblock %}

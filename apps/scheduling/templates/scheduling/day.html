@@ -1,0 +1,105 @@
+{% extends "app_base.html" %}
+
+{% block title %}Agenda — LUPA Soluções{% endblock %}
+
+{% block content %}
+<section class="page-enter mx-auto max-w-4xl px-4 sm:px-6 py-5 sm:py-10">
+
+  {# Toolbar #}
+  <header class="flex items-start justify-between gap-3 flex-wrap">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+        Agenda
+      </h1>
+      <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+        {{ total_events }} atendimento{{ total_events|pluralize:"s" }} em {{ selected|date:"l, j \d\e F" }}
+      </p>
+    </div>
+    <div class="flex items-center gap-1 rounded-full border p-1
+                border-slate-200 bg-white
+                dark:border-slate-800 dark:bg-slate-900">
+      <a href="?d={{ selected|date:'Y-m-d' }}"
+         class="px-3 py-1.5 text-xs font-medium rounded-full bg-lupa-500 text-white">
+        Dia
+      </a>
+      <a href="{% url 'scheduling:week' %}?d={{ selected|date:'Y-m-d' }}"
+         class="px-3 py-1.5 text-xs font-medium rounded-full text-slate-600 hover:text-slate-900
+                dark:text-slate-400 dark:hover:text-white transition-colors">
+        Semana
+      </a>
+    </div>
+  </header>
+
+  {# Date navigator #}
+  <nav class="mt-5 flex items-center justify-between gap-2">
+    <a href="?d={{ prev_day|date:'Y-m-d' }}"
+       class="tap-target btn-press inline-flex h-10 w-10 items-center justify-center rounded-full
+              border border-slate-200 hover:bg-slate-100
+              dark:border-slate-800 dark:hover:bg-slate-900 transition-colors"
+       aria-label="Dia anterior">
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+    </a>
+
+    <div class="text-center">
+      <p class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">
+        {{ selected|date:"l" }}
+      </p>
+      <p class="text-lg font-bold text-slate-900 dark:text-white">
+        {{ selected|date:"j \d\e F" }}
+      </p>
+      {% if selected != today %}
+        <a href="?d={{ today|date:'Y-m-d' }}" class="text-[11px] text-lupa-500 hover:underline">Voltar pra hoje</a>
+      {% endif %}
+    </div>
+
+    <a href="?d={{ next_day|date:'Y-m-d' }}"
+       class="tap-target btn-press inline-flex h-10 w-10 items-center justify-center rounded-full
+              border border-slate-200 hover:bg-slate-100
+              dark:border-slate-800 dark:hover:bg-slate-900 transition-colors"
+       aria-label="Próximo dia">
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M9 18l6-6-6-6"/>
+      </svg>
+    </a>
+  </nav>
+
+  {# Timeline #}
+  <div class="mt-6 rounded-2xl border overflow-hidden
+              border-slate-200 bg-white
+              dark:border-slate-800 dark:bg-slate-900/60">
+    <ul class="divide-y divide-slate-100 dark:divide-slate-800">
+      {% for block in hour_blocks %}
+        <li class="flex items-stretch min-h-[60px]">
+          <div class="w-16 sm:w-20 shrink-0 border-r border-slate-100 dark:border-slate-800
+                      flex items-start justify-end pr-3 pt-2">
+            <span class="text-[11px] font-medium text-slate-400 dark:text-slate-500">
+              {{ block.label }}
+            </span>
+          </div>
+          <div class="flex-1 py-2 px-3 space-y-1.5">
+            {% for evt in block.events %}
+              <a href="{% if evt.ticket %}{% url 'tickets:detail' evt.ticket.pk %}{% else %}#{% endif %}"
+                 class="block rounded-lg border px-3 py-2 transition-all
+                        border-lupa-300 bg-lupa-500/5 hover:bg-lupa-500/10
+                        dark:border-lupa-400/40 dark:bg-lupa-500/15 dark:hover:bg-lupa-500/20">
+                <p class="text-sm font-medium text-slate-900 dark:text-white truncate">
+                  {{ evt.title|default:evt.ticket.client.name }}
+                </p>
+                <p class="text-[11px] text-slate-600 dark:text-slate-400">
+                  {{ evt.starts_at|time:"H:i" }}&ndash;{{ evt.ends_at|time:"H:i" }}
+                  {% if evt.ticket %}&middot; {{ evt.ticket.get_status_display }}{% endif %}
+                </p>
+              </a>
+            {% empty %}
+              <div class="text-[11px] text-slate-300 dark:text-slate-700">&middot;</div>
+            {% endfor %}
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+</section>
+{% endblock %}

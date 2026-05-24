@@ -27,12 +27,9 @@
     {# Ações #}
     <div class="flex items-center gap-2">
 
-      {# Tema toggle #}
+      {# Tema toggle — onclick puro pra não depender de x-data Alpine #}
       <button type="button"
-              @click="
-                const isDark = document.documentElement.classList.toggle('dark');
-                localStorage.setItem('lupa-theme', isDark ? 'dark' : 'light');
-              "
+              onclick="const isDark = document.documentElement.classList.toggle('dark'); localStorage.setItem('lupa-theme', isDark ? 'dark' : 'light');"
               aria-label="Alternar tema claro/escuro"
               class="theme-toggle tap-target grid h-10 w-10 place-items-center rounded-full
                      border border-slate-200 hover:bg-slate-100 active:scale-95

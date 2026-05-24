@@ -1,0 +1,108 @@
+{% extends "app_base.html" %}
+
+{% block title %}Atendimentos — LUPA Soluções{% endblock %}
+
+{% block content %}
+<section class="page-enter mx-auto max-w-5xl px-4 sm:px-6 py-5 sm:py-10">
+
+  <header class="flex items-start justify-between gap-3 flex-wrap">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+        Atendimentos
+      </h1>
+      <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+        Tudo que você marcou, está fazendo ou já finalizou.
+      </p>
+    </div>
+    <a href="{% url 'tickets:new_client' %}"
+       class="tap-target btn-press inline-flex items-center gap-2 rounded-full
+              bg-lupa-500 px-5 py-2.5 text-sm font-medium text-white
+              hover:bg-lupa-600 active:scale-95 transition-all
+              shadow-sm hover:shadow-md hover:shadow-lupa-500/20">
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 5v14M5 12h14"/>
+      </svg>
+      Novo atendimento
+    </a>
+  </header>
+
+  {# Filtros #}
+  <div class="mt-5 flex flex-wrap gap-2 text-xs">
+    <a href="?status=all"
+       class="rounded-full px-3 py-1.5 border transition-colors
+              {% if status == 'all' %}bg-lupa-500 border-lupa-500 text-white{% else %}border-slate-300 text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-900{% endif %}">
+      Todos
+    </a>
+    {% for value, label in statuses %}
+      <a href="?status={{ value }}"
+         class="rounded-full px-3 py-1.5 border transition-colors
+                {% if status == value %}bg-lupa-500 border-lupa-500 text-white{% else %}border-slate-300 text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-900{% endif %}">
+        {{ label }}
+      </a>
+    {% endfor %}
+  </div>
+
+  <div class="mt-5 sm:mt-6">
+    {% if tickets %}
+      <ul class="grid gap-2 sm:gap-3">
+        {% for t in tickets %}
+          <li class="card-lift">
+            <a href="{% url 'tickets:detail' t.pk %}"
+               class="block rounded-xl border p-4 transition-all
+                      border-slate-200 bg-white hover:border-lupa-400
+                      dark:border-slate-800 dark:bg-slate-900/60 dark:hover:border-lupa-400">
+              <div class="flex items-center justify-between gap-3">
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-2">
+                    <p class="text-sm font-mono text-slate-500 dark:text-slate-500">{{ t.code }}</p>
+                    <span class="rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider
+                                 {% if t.status == 'finalized' %}bg-emerald-500/10 text-emerald-700 dark:text-emerald-300
+                                 {% elif t.status == 'cancelled' %}bg-red-500/10 text-red-700 dark:text-red-300
+                                 {% elif t.status == 'in_progress' %}bg-blue-500/10 text-blue-700 dark:text-blue-300
+                                 {% else %}bg-lupa-500/10 text-lupa-700 dark:text-lupa-300{% endif %}">
+                      {{ t.get_status_display }}
+                    </span>
+                  </div>
+                  <p class="mt-1 text-sm font-medium text-slate-900 dark:text-white truncate">
+                    {{ t.client.name }}
+                  </p>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">
+                    {% if t.scheduled_at %}{{ t.scheduled_at|date:"j \d\e b, H:i" }}{% else %}sem data{% endif %}
+                    &middot; R$ {{ t.total|floatformat:2 }}
+                  </p>
+                </div>
+                <svg class="h-5 w-5 text-slate-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M9 18l6-6-6-6"/>
+                </svg>
+              </div>
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="rounded-2xl border-2 border-dashed p-8 sm:p-12 text-center
+                  border-slate-300 bg-white
+                  dark:border-slate-700 dark:bg-slate-900/30">
+        <div class="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full
+                    bg-lupa-500/10 text-lupa-500 dark:text-lupa-300 text-2xl">
+          📋
+        </div>
+        <p class="mt-4 text-sm font-medium text-slate-900 dark:text-white">
+          Nenhum atendimento encontrado.
+        </p>
+        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          Crie o primeiro pra começar a registrar seu trabalho.
+        </p>
+        <a href="{% url 'tickets:new_client' %}"
+           class="tap-target btn-press mt-5 inline-flex items-center gap-2 rounded-full
+                  bg-lupa-500 px-5 py-2.5 text-sm font-medium text-white
+                  hover:bg-lupa-600 transition-all">
+          Novo atendimento
+        </a>
+      </div>
+    {% endif %}
+  </div>
+
+</section>
+{% endblock %}

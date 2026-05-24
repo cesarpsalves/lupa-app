@@ -4,6 +4,8 @@
 {% endcomment %}
 {% url 'app:dashboard' as dashboard_url %}
 {% url 'app:more' as more_url %}
+{% url 'scheduling:day' as agenda_url %}
+{% url 'tickets:list' as tickets_url %}
 <nav aria-label="Navegação principal"
      class="fixed bottom-0 inset-x-0 z-40 border-t
             border-slate-200 bg-white/95 backdrop-blur
@@ -11,6 +13,8 @@
             pb-[env(safe-area-inset-bottom)]
             shadow-[0_-4px_24px_-12px_rgba(0,0,0,0.1)]">
   <ul class="mx-auto max-w-6xl grid grid-cols-5 text-[11px] sm:text-xs">
+
+    {# Início #}
     <li>
       <a href="{{ dashboard_url }}"
          {% if request.path == dashboard_url %}aria-current="page"{% endif %}
@@ -22,28 +26,34 @@
         <span>Início</span>
       </a>
     </li>
+
+    {# Agenda #}
     <li>
-      <a href="#"
-         class="bottom-nav-item flex flex-col items-center justify-center gap-1 py-3 tap-target
-                text-slate-400 dark:text-slate-600 cursor-not-allowed"
-         aria-disabled="true" title="Em breve">
+      <a href="{{ agenda_url }}"
+         {% if "/agenda/" in request.path %}aria-current="page"{% endif %}
+         class="bottom-nav-item flex flex-col items-center justify-center gap-1 py-3 tap-target transition-colors
+                {% if '/agenda/' in request.path %}text-lupa-500 dark:text-lupa-300 font-medium{% else %}text-slate-600 dark:text-slate-400 hover:text-lupa-500{% endif %}">
         <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
         </svg>
         <span>Agenda</span>
       </a>
     </li>
+
+    {# Atendimentos #}
     <li>
-      <a href="#"
-         class="bottom-nav-item flex flex-col items-center justify-center gap-1 py-3 tap-target
-                text-slate-400 dark:text-slate-600 cursor-not-allowed"
-         aria-disabled="true" title="Em breve">
+      <a href="{{ tickets_url }}"
+         {% if "/atendimentos/" in request.path %}aria-current="page"{% endif %}
+         class="bottom-nav-item flex flex-col items-center justify-center gap-1 py-3 tap-target transition-colors
+                {% if '/atendimentos/' in request.path %}text-lupa-500 dark:text-lupa-300 font-medium{% else %}text-slate-600 dark:text-slate-400 hover:text-lupa-500{% endif %}">
         <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
         </svg>
         <span>Atendim.</span>
       </a>
     </li>
+
+    {# Caixa (em breve) #}
     <li>
       <a href="#"
          class="bottom-nav-item flex flex-col items-center justify-center gap-1 py-3 tap-target
@@ -55,6 +65,8 @@
         <span>Caixa</span>
       </a>
     </li>
+
+    {# Mais #}
     <li>
       <a href="{{ more_url }}"
          {% if request.path == more_url or "/clientes/" in request.path or "/servicos/" in request.path or "/empresa/" in request.path %}aria-current="page"{% endif %}
