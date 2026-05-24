@@ -6,36 +6,52 @@
   {% csrf_token %}
 
   <div class="sm:col-span-2">
-    <label for="id_niche_label" class="block text-sm font-medium text-slate-200">{{ waitlist_form.niche_label.label }}</label>
+    <label for="id_niche_label" class="block text-sm font-medium
+                                       text-slate-700 dark:text-slate-200">
+      {{ waitlist_form.niche_label.label }}
+    </label>
     <input type="text" id="id_niche_label" name="niche_label" required
-           class="mt-1 block w-full rounded-lg border-slate-700 bg-slate-950/60 text-white placeholder-slate-500 focus:border-lupa-500 focus:ring-lupa-500"
+           class="mt-1 block w-full rounded-lg shadow-sm
+                  border-slate-300 bg-white text-slate-900 placeholder-slate-400
+                  focus:border-lupa-500 focus:ring-lupa-500
+                  dark:border-slate-700 dark:bg-slate-950/60 dark:text-white dark:placeholder-slate-500"
            placeholder="ex.: barbeiro, personal trainer" />
     {% if waitlist_form.niche_label.errors %}
-      <p class="mt-1 text-sm text-red-400">{{ waitlist_form.niche_label.errors|join:" " }}</p>
+      <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ waitlist_form.niche_label.errors|join:" " }}</p>
     {% endif %}
   </div>
 
   <div>
-    <label for="id_email" class="block text-sm font-medium text-slate-200">Email</label>
+    <label for="id_email" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Email</label>
     <input type="email" id="id_email" name="email" required
-           class="mt-1 block w-full rounded-lg border-slate-700 bg-slate-950/60 text-white placeholder-slate-500 focus:border-lupa-500 focus:ring-lupa-500"
+           class="mt-1 block w-full rounded-lg shadow-sm
+                  border-slate-300 bg-white text-slate-900 placeholder-slate-400
+                  focus:border-lupa-500 focus:ring-lupa-500
+                  dark:border-slate-700 dark:bg-slate-950/60 dark:text-white dark:placeholder-slate-500"
            placeholder="seu@email.com" />
     {% if waitlist_form.email.errors %}
-      <p class="mt-1 text-sm text-red-400">{{ waitlist_form.email.errors|join:" " }}</p>
+      <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ waitlist_form.email.errors|join:" " }}</p>
     {% endif %}
   </div>
 
   <div>
-    <label for="id_name" class="block text-sm font-medium text-slate-200">Nome <span class="text-slate-500">(opcional)</span></label>
+    <label for="id_name" class="block text-sm font-medium text-slate-700 dark:text-slate-200">
+      Nome <span class="text-slate-400 dark:text-slate-500">(opcional)</span>
+    </label>
     <input type="text" id="id_name" name="name"
-           class="mt-1 block w-full rounded-lg border-slate-700 bg-slate-950/60 text-white placeholder-slate-500 focus:border-lupa-500 focus:ring-lupa-500"
+           class="mt-1 block w-full rounded-lg shadow-sm
+                  border-slate-300 bg-white text-slate-900 placeholder-slate-400
+                  focus:border-lupa-500 focus:ring-lupa-500
+                  dark:border-slate-700 dark:bg-slate-950/60 dark:text-white dark:placeholder-slate-500"
            placeholder="Seu nome" />
   </div>
 
   <div class="sm:col-span-2 flex items-center justify-between gap-3">
-    <p class="text-xs text-slate-500">Você pode cancelar a qualquer momento.</p>
+    <p class="text-xs text-slate-500 dark:text-slate-500">Você pode cancelar a qualquer momento.</p>
     <button type="submit"
-            class="inline-flex items-center gap-2 rounded-full bg-lupa-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-lupa-600 transition-colors">
+            class="inline-flex items-center gap-2 rounded-full bg-lupa-500
+                   px-5 py-2.5 text-sm font-medium text-white
+                   hover:bg-lupa-600 transition-colors">
       Entrar na lista &rarr;
     </button>
   </div>

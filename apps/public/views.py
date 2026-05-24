@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.db.models.functions import Lower
 from django.http import HttpRequest, HttpResponse
@@ -55,7 +56,6 @@ def waitlist_subscribe(request: HttpRequest) -> HttpResponse:
                 request,
                 "Esse email já está na lista — vamos te avisar assim que estiver disponível.",
             )
-        # HTMX devolve só o fragmento; navegação normal volta pra landing.
         if request.htmx:  # type: ignore[attr-defined]
             return render(request, "public/_waitlist_success.html")
     else:
@@ -67,3 +67,13 @@ def waitlist_subscribe(request: HttpRequest) -> HttpResponse:
                 status=422,
             )
     return landing(request)
+
+
+@login_required
+def dashboard_placeholder(request: HttpRequest) -> HttpResponse:
+    """Tela de transição enquanto o app interno é construído.
+
+    Vai ser substituída pela `app:dashboard` na próxima fase
+    (onboarding + dashboard + models do MVP).
+    """
+    return render(request, "public/dashboard_placeholder.html")

@@ -149,7 +149,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LOGIN_URL = "accounts:login"
-LOGIN_REDIRECT_URL = "app:dashboard"
+# TODO: trocar pra "app:dashboard" quando a app interna existir.
+LOGIN_REDIRECT_URL = "public:dashboard_placeholder"
 LOGOUT_REDIRECT_URL = "public:landing"
 
 # ── Sessões ─────────────────────────────────────────────────

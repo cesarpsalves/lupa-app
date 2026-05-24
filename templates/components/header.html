@@ -1,29 +1,77 @@
 {% load static %}
-<header class="sticky top-0 z-40 border-b border-slate-800/80 bg-slate-950/85 backdrop-blur supports-[backdrop-filter]:bg-slate-950/60">
+<header class="sticky top-0 z-40 border-b backdrop-blur transition-colors
+               border-slate-200/80 bg-white/85
+               dark:border-slate-800/80 dark:bg-slate-950/85
+               supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-slate-950/60">
   <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+
+    {# Logo #}
     <a href="{% url 'public:landing' %}" class="flex items-center gap-3 group">
-      <span class="grid h-9 w-9 place-items-center rounded-lg bg-lupa-500/10 text-lupa-100 font-bold ring-1 ring-lupa-500/30">L</span>
-      <span class="text-base font-semibold tracking-tight text-slate-100 group-hover:text-white transition-colors">LUPA</span>
+      <img src="{% static 'img/logo.svg' %}" alt="LUPA"
+           class="h-9 w-9 transition-transform group-hover:scale-105" />
+      <span class="text-base font-semibold tracking-tight
+                   text-slate-900 group-hover:text-lupa-500
+                   dark:text-slate-100 dark:group-hover:text-white
+                   transition-colors">
+        LUPA
+      </span>
     </a>
 
-    <nav class="hidden md:flex items-center gap-8 text-sm text-slate-300" aria-label="Principal">
-      <a href="#para-quem" class="hover:text-white transition-colors">Para quem é</a>
-      <a href="#como-funciona" class="hover:text-white transition-colors">Como funciona</a>
-      <a href="#waitlist" class="hover:text-white transition-colors">Outros nichos</a>
+    {# Navegação #}
+    <nav class="hidden md:flex items-center gap-8 text-sm
+                text-slate-600 dark:text-slate-300" aria-label="Principal">
+      <a href="#para-quem" class="hover:text-lupa-500 dark:hover:text-white transition-colors">Para quem é</a>
+      <a href="#como-funciona" class="hover:text-lupa-500 dark:hover:text-white transition-colors">Como funciona</a>
+      <a href="#waitlist" class="hover:text-lupa-500 dark:hover:text-white transition-colors">Outros nichos</a>
     </nav>
 
-    <div class="flex items-center gap-3">
+    {# Ações + tema #}
+    <div class="flex items-center gap-2 sm:gap-3" x-data="{ open: false }">
+
+      {# Tema toggle #}
+      <button type="button"
+              @click="
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('lupa-theme', isDark ? 'dark' : 'light');
+              "
+              aria-label="Alternar tema claro/escuro"
+              class="grid h-9 w-9 place-items-center rounded-full
+                     border border-slate-200 hover:bg-slate-100
+                     dark:border-slate-800 dark:hover:bg-slate-900
+                     transition-colors">
+        {# Ícone sol — visível em dark mode #}
+        <svg class="hidden dark:block h-4 w-4 text-yellow-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+        </svg>
+        {# Ícone lua — visível em light mode #}
+        <svg class="block dark:hidden h-4 w-4 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+
       {% if user.is_authenticated %}
-        <a href="#" class="text-sm text-slate-300 hover:text-white">{{ user.display_name }}</a>
+        <span class="hidden sm:inline-block text-sm text-slate-600 dark:text-slate-300">
+          {{ user.display_name }}
+        </span>
         <form action="{% url 'accounts:logout' %}" method="post" class="inline">
           {% csrf_token %}
-          <button type="submit" class="text-sm text-slate-300 hover:text-white">Sair</button>
+          <button type="submit"
+                  class="text-sm text-slate-600 hover:text-lupa-500
+                         dark:text-slate-300 dark:hover:text-white transition-colors">
+            Sair
+          </button>
         </form>
       {% else %}
         <a href="{% url 'accounts:login' %}"
-           class="hidden sm:inline-block text-sm text-slate-300 hover:text-white">Entrar</a>
+           class="hidden sm:inline-block text-sm text-slate-600 hover:text-lupa-500
+                  dark:text-slate-300 dark:hover:text-white transition-colors">
+          Entrar
+        </a>
         <a href="{% url 'accounts:signup' %}"
-           class="inline-flex items-center gap-2 rounded-full bg-lupa-500 px-4 py-2 text-sm font-medium text-white hover:bg-lupa-600 transition-colors shadow-sm">
+           class="inline-flex items-center gap-2 rounded-full bg-lupa-500
+                  px-4 py-2 text-sm font-medium text-white
+                  hover:bg-lupa-600 transition-colors shadow-sm">
           Começar grátis
         </a>
       {% endif %}
