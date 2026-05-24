@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% load static %}
+
+{# Layout do app interno: header simplificado + main + bottom nav mobile + sidebar desktop. #}
+
+{% block header %}{% include "components/app_header.html" %}{% endblock %}
+{% block footer %}{% include "components/app_bottom_nav.html" %}{% endblock %}

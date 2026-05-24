@@ -57,6 +57,14 @@ LOCAL_APPS = [
     "apps.core",
     "apps.accounts",
     "apps.companies",
+    "apps.clients",
+    "apps.catalog",
+    "apps.scheduling",
+    "apps.tickets",
+    "apps.payments",
+    "apps.cashflow",
+    "apps.documents",
+    "apps.dashboard",
     "apps.public",
 ]
 
@@ -149,8 +157,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LOGIN_URL = "accounts:login"
-# TODO: trocar pra "app:dashboard" quando a app interna existir.
-LOGIN_REDIRECT_URL = "public:dashboard_placeholder"
+LOGIN_REDIRECT_URL = "app:dashboard"
 LOGOUT_REDIRECT_URL = "public:landing"
 
 # ── Sessões ─────────────────────────────────────────────────

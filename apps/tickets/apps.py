@@ -1,0 +1,13 @@
+from __future__ import annotations
+
+from django.apps import AppConfig
+
+
+class TicketsConfig(AppConfig):
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "apps.tickets"
+    label = "tickets"
+    verbose_name = "Atendimentos"
+
+    def ready(self) -> None:
+        from . import signals  # noqa: F401 — registra handlers

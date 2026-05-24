@@ -1,0 +1,152 @@
+{% extends "app_base.html" %}
+{% load humanize %}
+
+{% block title %}Dashboard — LUPA{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-6xl px-4 sm:px-6 py-6 sm:py-10">
+
+  <header class="mb-6">
+    <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+      Olá, {{ user.display_name }} 👋
+    </h1>
+    <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+      {% if today_tickets %}
+        Você tem {{ today_tickets|length }} atendimento{{ today_tickets|length|pluralize:"s" }} hoje.
+      {% else %}
+        Sem atendimentos hoje — bom dia pra prospectar.
+      {% endif %}
+    </p>
+  </header>
+
+  {# Cards principais #}
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <article class="rounded-2xl border p-5
+                    border-slate-200 bg-white
+                    dark:border-slate-800 dark:bg-slate-900/50">
+      <p class="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Este mês</p>
+      <p class="mt-2 text-2xl font-bold text-slate-900 dark:text-white">
+        R$ {{ revenue_month|floatformat:2|default:"0,00" }}
+      </p>
+      <p class="mt-1 text-xs text-slate-500 dark:text-slate-500">Faturamento (entradas)</p>
+    </article>
+
+    <article class="rounded-2xl border p-5
+                    border-slate-200 bg-white
+                    dark:border-slate-800 dark:bg-slate-900/50">
+      <p class="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">A receber</p>
+      <p class="mt-2 text-2xl font-bold text-slate-900 dark:text-white">
+        R$ {{ receivable_total|floatformat:2|default:"0,00" }}
+      </p>
+      <p class="mt-1 text-xs text-slate-500 dark:text-slate-500">
+        {{ receivable_count }} saldo{{ receivable_count|pluralize:"s" }} pendente{{ receivable_count|pluralize:"s" }}
+      </p>
+    </article>
+
+    <article class="rounded-2xl border p-5
+                    border-slate-200 bg-white
+                    dark:border-slate-800 dark:bg-slate-900/50">
+      <p class="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Hoje</p>
+      <p class="mt-2 text-2xl font-bold text-slate-900 dark:text-white">
+        {{ today_tickets|length }} atendimento{{ today_tickets|length|pluralize:"s" }}
+      </p>
+      <p class="mt-1 text-xs text-slate-500 dark:text-slate-500">Agendados pra hoje</p>
+    </article>
+
+    <article class="rounded-2xl border p-5
+                    border-lupa-500 bg-lupa-500/5
+                    dark:border-lupa-300/30 dark:bg-lupa-500/10
+                    flex flex-col justify-between">
+      <div>
+        <p class="text-xs font-medium uppercase tracking-wider text-lupa-600 dark:text-lupa-200">Próximo passo</p>
+        <p class="mt-2 text-base font-semibold text-slate-900 dark:text-white">
+          Cadastre seu 1º cliente
+        </p>
+      </div>
+      <button type="button" disabled
+              class="mt-3 inline-flex items-center justify-center rounded-full bg-lupa-500
+                     px-4 py-2 text-sm font-medium text-white opacity-60 cursor-not-allowed"
+              title="Em breve">
+        + Novo atendimento
+      </button>
+    </article>
+  </div>
+
+  {# Hoje #}
+  <section class="mt-10">
+    <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Hoje</h2>
+    <div class="mt-4 rounded-2xl border overflow-hidden
+                border-slate-200 bg-white
+                dark:border-slate-800 dark:bg-slate-900/50">
+      {% if today_tickets %}
+        <ul class="divide-y divide-slate-100 dark:divide-slate-800">
+          {% for ticket in today_tickets %}
+            <li class="flex items-center justify-between px-5 py-4">
+              <div>
+                <p class="text-sm font-medium text-slate-900 dark:text-white">{{ ticket.client.name }}</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">
+                  {{ ticket.scheduled_at|time:"H:i" }} &middot; {{ ticket.duration_minutes }}min &middot;
+                  R$ {{ ticket.total|floatformat:2 }}
+                </p>
+              </div>
+              <span class="text-xs font-medium uppercase tracking-wider
+                           text-lupa-500 dark:text-lupa-300">
+                {{ ticket.get_status_display }}
+              </span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div class="px-5 py-12 text-center">
+          <p class="text-sm text-slate-500 dark:text-slate-400">
+            Nada agendado pra hoje.
+          </p>
+          <p class="mt-1 text-xs text-slate-400 dark:text-slate-500">
+            Aqui aparecem os atendimentos do dia conforme você for criando.
+          </p>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  {# Semana #}
+  <section class="mt-10">
+    <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Próximos 7 dias</h2>
+    <div class="mt-4 grid grid-cols-7 gap-2">
+      {% for d in week %}
+        <div class="rounded-xl border px-2 py-3 text-center
+                    border-slate-200 bg-white
+                    dark:border-slate-800 dark:bg-slate-900/50">
+          <p class="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            {{ d.date|date:"D"|slice:":3" }}
+          </p>
+          <p class="mt-1 text-lg font-bold text-slate-900 dark:text-white">{{ d.date|date:"d" }}</p>
+          <p class="mt-1 text-xs {% if d.count %}text-lupa-500 dark:text-lupa-300{% else %}text-slate-400 dark:text-slate-600{% endif %}">
+            {{ d.count }} ag.
+          </p>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  {# Próximos passos da v1 #}
+  <section class="mt-10">
+    <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Em construção</h2>
+    <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+      As próximas funcionalidades já têm modelos prontos e admin Django funcionando.
+      A interface chega em breve.
+    </p>
+    <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {% for item in upcoming_features %}
+        <div class="rounded-xl border px-4 py-3 text-sm
+                    border-slate-200 bg-white text-slate-700
+                    dark:border-slate-800 dark:bg-slate-900/50 dark:text-slate-300">
+          <span class="text-lupa-500 dark:text-lupa-300 mr-2">○</span>
+          {{ item }}
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+</section>
+{% endblock %}
