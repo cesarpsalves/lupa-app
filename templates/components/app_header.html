@@ -2,27 +2,44 @@
 <header class="sticky top-0 z-40 border-b backdrop-blur transition-colors
                border-slate-200/80 bg-white/85
                dark:border-slate-800/80 dark:bg-slate-950/85">
-  <div class="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
+  <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 gap-3">
 
-    <a href="{% url 'app:dashboard' %}" class="flex items-center gap-2 group">
-      <img src="{% static 'img/logo.svg' %}" alt="LUPA" class="h-8 w-8" />
-      <span class="text-sm font-semibold tracking-tight
-                   text-slate-900 dark:text-slate-100">
-        {% if current_company %}{{ current_company.name }}{% else %}LUPA{% endif %}
+    {# Logo + branding (marca primeiro, empresa secundária) #}
+    <a href="{% url 'app:dashboard' %}"
+       class="flex items-center gap-3 group tap-target -ml-2 px-2 rounded-lg
+              hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors min-w-0">
+      <img src="{% static 'img/logo.svg' %}" alt="LUPA Soluções" class="h-9 w-9 shrink-0" />
+      <span class="flex flex-col leading-none min-w-0">
+        <span class="text-[15px] font-bold tracking-tight
+                     text-slate-900 dark:text-slate-100">
+          LUPA
+        </span>
+        {% if current_company %}
+          <span class="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-[180px]">
+            {{ current_company.name }}
+          </span>
+        {% else %}
+          <span class="mt-0.5 text-[10px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
+            Soluções
+          </span>
+        {% endif %}
       </span>
     </a>
 
-    <div class="flex items-center gap-2">
-      {# Toggle de tema #}
+    {# Ações #}
+    <div class="flex items-center gap-2" x-data="{ open: false }">
+
+      {# Tema toggle #}
       <button type="button"
               @click="
                 const isDark = document.documentElement.classList.toggle('dark');
                 localStorage.setItem('lupa-theme', isDark ? 'dark' : 'light');
               "
-              aria-label="Alternar tema"
-              class="grid h-9 w-9 place-items-center rounded-full
-                     border border-slate-200 hover:bg-slate-100
-                     dark:border-slate-800 dark:hover:bg-slate-900 transition-colors">
+              aria-label="Alternar tema claro/escuro"
+              class="theme-toggle tap-target grid h-10 w-10 place-items-center rounded-full
+                     border border-slate-200 hover:bg-slate-100 active:scale-95
+                     dark:border-slate-800 dark:hover:bg-slate-900
+                     transition-colors btn-press">
         <svg class="hidden dark:block h-4 w-4 text-yellow-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="12" cy="12" r="4"/>
           <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
@@ -33,27 +50,38 @@
       </button>
 
       {# Menu do usuário #}
-      <div x-data="{ open: false }" class="relative">
+      <div class="relative" x-data="{ open: false }">
         <button @click="open = !open" type="button"
-                class="grid h-9 w-9 place-items-center rounded-full bg-lupa-500/10
+                :aria-expanded="open"
+                class="tap-target grid h-10 w-10 place-items-center rounded-full bg-lupa-500/10
                        text-lupa-500 dark:text-lupa-300 ring-1 ring-lupa-500/30
+                       hover:bg-lupa-500/20 active:scale-95 transition-all
                        text-sm font-semibold uppercase">
           {{ user.first_name|default:user.email|slice:":1" }}
         </button>
 
-        <div x-show="open" @click.outside="open = false" x-transition
-             class="absolute right-0 mt-2 w-56 origin-top-right rounded-xl border p-2 shadow-lg
+        <div x-show="open" @click.outside="open = false"
+             x-transition:enter="transition ease-out duration-150"
+             x-transition:enter-start="opacity-0 -translate-y-1 scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+             x-transition:leave="transition ease-in duration-100"
+             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+             x-transition:leave-end="opacity-0 -translate-y-1 scale-95"
+             class="absolute right-0 mt-2 w-60 origin-top-right rounded-xl border p-2 shadow-lg
                     border-slate-200 bg-white
                     dark:border-slate-800 dark:bg-slate-900"
              style="display:none">
-          <div class="px-3 py-2 text-xs text-slate-500 dark:text-slate-400 truncate">{{ user.email }}</div>
+          <div class="px-3 py-2">
+            <p class="text-sm font-medium text-slate-900 dark:text-white truncate">{{ user.display_name }}</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 truncate">{{ user.email }}</p>
+          </div>
           <hr class="my-1 border-slate-200 dark:border-slate-800" />
           <form action="{% url 'accounts:logout' %}" method="post">
             {% csrf_token %}
             <button type="submit"
                     class="block w-full text-left px-3 py-2 text-sm rounded-md
                            text-slate-700 hover:bg-slate-100
-                           dark:text-slate-300 dark:hover:bg-slate-800">
+                           dark:text-slate-300 dark:hover:bg-slate-800 transition-colors">
               Sair
             </button>
           </form>
