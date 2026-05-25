@@ -50,6 +50,10 @@ WORKDIR /app
 COPY --from=builder /install /usr/local
 COPY --chown=lupa:lupa . /app
 
+# Diretórios pra estáticos e media. Pré-criados com chown lupa:lupa pra que
+# volumes Docker nomeados herdem essas permissões quando montados vazios.
+RUN mkdir -p /app/staticfiles /app/media && chown -R lupa:lupa /app/staticfiles /app/media
+
 USER lupa
 
 EXPOSE 8000
@@ -58,9 +62,12 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
     CMD curl -fsS http://127.0.0.1:8000/healthz || exit 1
 
 ENTRYPOINT ["/app/docker/entrypoint.sh"]
+# Workers sync (Django sync + HTMX). UvicornWorker exigiria uvicorn[standard]
+# completo (click, httptools, etc) que o pip-compile não vinha resolvendo.
 CMD ["gunicorn", "config.wsgi:application", \
      "--bind", "0.0.0.0:8000", \
      "--workers", "3", \
-     "--worker-class", "uvicorn.workers.UvicornWorker", \
+     "--worker-class", "sync", \
+     "--timeout", "60", \
      "--access-logfile", "-", \
      "--error-logfile", "-"]
