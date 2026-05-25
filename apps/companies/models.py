@@ -3,6 +3,7 @@
 Empresa NÃO herda de TenantModel — ela É o tenant.
 Membership liga User ↔ Company com um role.
 """
+
 from __future__ import annotations
 
 from django.conf import settings
@@ -54,7 +55,7 @@ class NichePreset(TimestampedModel):
         return self.name
 
 
-def _company_logo_path(instance: "Company", filename: str) -> str:
+def _company_logo_path(instance: Company, filename: str) -> str:
     return f"companies/{instance.slug}/logo/{filename}"
 
 
@@ -129,7 +130,10 @@ class Company(TimestampedModel):
             "#475569",  # slate
         ]
         import hashlib
-        h = hashlib.md5(self.slug.encode()).hexdigest()
+
+        # MD5 aqui é só pra derivar uma cor visual a partir do slug — não é
+        # uso criptográfico, então ignoramos o aviso do bandit.
+        h = hashlib.md5(self.slug.encode(), usedforsecurity=False).hexdigest()
         return palette[int(h[:2], 16) % len(palette)]
 
 

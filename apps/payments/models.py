@@ -1,4 +1,5 @@
 """Pagamentos — sinal, saldo, pagamento único."""
+
 from __future__ import annotations
 
 from decimal import Decimal
@@ -44,9 +45,7 @@ class Payment(TenantModel):
         default=PaymentStatus.PENDING,
         db_index=True,
     )
-    amount = models.DecimalField(
-        "valor", max_digits=10, decimal_places=2, default=Decimal("0.00")
-    )
+    amount = models.DecimalField("valor", max_digits=10, decimal_places=2, default=Decimal("0.00"))
     due_date = models.DateField("vence em", null=True, blank=True)
     paid_at = models.DateTimeField("pago em", null=True, blank=True)
     method = models.CharField(

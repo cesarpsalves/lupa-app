@@ -1,4 +1,5 @@
 """CRUD HTMX de Clientes — list + busca + create + update + detail + delete (soft)."""
+
 from __future__ import annotations
 
 from django.contrib import messages

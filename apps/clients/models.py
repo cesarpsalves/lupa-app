@@ -1,4 +1,5 @@
 """Clientes da empresa."""
+
 from __future__ import annotations
 
 from django.db import models

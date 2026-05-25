@@ -1,7 +1,9 @@
 """Middleware que resolve o tenant ativo a partir do user logado."""
+
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable
+from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 from django.http import HttpRequest, HttpResponse
 
@@ -33,7 +35,7 @@ class TenantMiddleware:
             set_current_company(None)
 
     @staticmethod
-    def _resolve(request: HttpRequest) -> "Company | None":
+    def _resolve(request: HttpRequest) -> Company | None:
         user = getattr(request, "user", None)
         if user is None or not user.is_authenticated:
             return None
@@ -44,9 +46,12 @@ class TenantMiddleware:
         company_id = request.session.get("active_company_id")
         if company_id:
             company = Company.objects.filter(pk=company_id).first()
-            if company and Membership.all_objects.filter(
-                company=company, user=user, is_active=True
-            ).exists():
+            if (
+                company
+                and Membership.all_objects.filter(
+                    company=company, user=user, is_active=True
+                ).exists()
+            ):
                 return company
 
         membership = (

@@ -3,6 +3,7 @@
 Movimentos automáticos (vindos de Payment marcado como `paid`) e manuais
 (saídas tipo combustível, equipamento) coexistem aqui.
 """
+
 from __future__ import annotations
 
 from decimal import Decimal
@@ -21,9 +22,7 @@ class CashflowEntry(TenantModel):
     direction = models.CharField(
         "tipo", max_length=3, choices=CashflowDirection.choices, db_index=True
     )
-    amount = models.DecimalField(
-        "valor", max_digits=10, decimal_places=2, default=Decimal("0.00")
-    )
+    amount = models.DecimalField("valor", max_digits=10, decimal_places=2, default=Decimal("0.00"))
     occurred_at = models.DateField("data", db_index=True)
     description = models.CharField("descrição", max_length=200)
     category = models.CharField(

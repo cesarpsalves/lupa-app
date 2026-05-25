@@ -1,4 +1,5 @@
 """CRUD + isolamento multi-tenant + máscara/validação."""
+
 from __future__ import annotations
 
 import pytest
@@ -19,8 +20,12 @@ def niche(db):
 def setup_two_tenants(db, niche):
     from apps.accounts.models import User
 
-    paulo = User.objects.create_user(email="paulo@x.com", password="Senha-Forte-12", first_name="Paulo")
-    maria = User.objects.create_user(email="maria@x.com", password="Senha-Forte-12", first_name="Maria")
+    paulo = User.objects.create_user(
+        email="paulo@x.com", password="Senha-Forte-12", first_name="Paulo"
+    )
+    maria = User.objects.create_user(
+        email="maria@x.com", password="Senha-Forte-12", first_name="Maria"
+    )
     company_a = Company.objects.create(name="Estúdio A", niche=niche)
     company_b = Company.objects.create(name="Estúdio B", niche=niche)
     Membership.objects.create(company=company_a, user=paulo, role=Role.OWNER)
@@ -76,9 +81,7 @@ def test_create_client_rejects_invalid_document(client, setup_two_tenants, setti
 def test_soft_delete_keeps_history(client, setup_two_tenants, settings):
     settings.ALLOWED_HOSTS = ["*"]
     client.force_login(setup_two_tenants["paulo"])
-    target = Client.all_objects.create(
-        company=setup_two_tenants["company_a"], name="Vai sair"
-    )
+    target = Client.all_objects.create(company=setup_two_tenants["company_a"], name="Vai sair")
     resp = client.post(reverse("clients:delete", args=[target.pk]))
     assert resp.status_code in (302, 204)
     target.refresh_from_db()

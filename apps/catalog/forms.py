@@ -37,9 +37,7 @@ class ServiceForm(forms.ModelForm):
             "description": "Descrição",
         }
         widgets = {
-            "name": forms.TextInput(
-                attrs={"placeholder": "Ex.: Ensaio fotográfico individual"}
-            ),
+            "name": forms.TextInput(attrs={"placeholder": "Ex.: Ensaio fotográfico individual"}),
             "description": forms.Textarea(
                 attrs={
                     "rows": 3,

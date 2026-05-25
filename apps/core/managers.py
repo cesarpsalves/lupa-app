@@ -7,6 +7,7 @@ ativo, retorna `none()` — **falha fechado**, nunca exibindo dados de outros.
 Para casos legítimos sem tenant ativo (admin Django, jobs cross-tenant), use
 `Model.all_objects` (manager paralelo sem filtro).
 """
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -22,7 +23,7 @@ if TYPE_CHECKING:
 class TenantQuerySet(models.QuerySet):
     """QuerySet com helper explícito para escolher empresa."""
 
-    def for_company(self, company: "Company") -> "TenantQuerySet":
+    def for_company(self, company: Company) -> TenantQuerySet:
         return self.filter(company=company)
 
 

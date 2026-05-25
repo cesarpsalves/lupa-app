@@ -1,4 +1,5 @@
 """Agenda — visualizações dia e semana."""
+
 from __future__ import annotations
 
 from datetime import date, datetime, timedelta
@@ -43,10 +44,7 @@ def agenda_day(request: HttpRequest) -> HttpResponse:
             {
                 "hour": h,
                 "label": f"{h:02d}:00",
-                "events": [
-                    e for e in events
-                    if timezone.localtime(e.starts_at).hour == h
-                ],
+                "events": [e for e in events if timezone.localtime(e.starts_at).hour == h],
             }
         )
 

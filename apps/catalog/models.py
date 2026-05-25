@@ -1,4 +1,5 @@
 """Catálogo: serviços (e produtos a partir do L3)."""
+
 from __future__ import annotations
 
 from decimal import Decimal

@@ -1,4 +1,5 @@
 """Views da empresa (workspace) — settings, edição de logo."""
+
 from __future__ import annotations
 
 from django.contrib import messages

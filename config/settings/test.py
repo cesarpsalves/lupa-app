@@ -1,4 +1,5 @@
 """Configurações de teste. Banco SQLite em memória, sem rede, sem Redis real."""
+
 from __future__ import annotations
 
 import os
@@ -7,7 +8,7 @@ os.environ.setdefault("DJANGO_SECRET_KEY", "test-secret-key-not-for-production")
 os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
 os.environ.setdefault("REDIS_URL", "redis://localhost:6379/15")
 
-from .base import *  # noqa: E402, F403
+from .base import *  # noqa: F403
 
 DEBUG = False
 
@@ -38,7 +39,7 @@ PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 AXES_ENABLED = False
 
 # ── Templates sem debug overhead ────────────────────────────
-TEMPLATES[0]["OPTIONS"]["debug"] = False  # noqa: F405
+TEMPLATES[0]["OPTIONS"]["debug"] = False
 
 # ── Sem HTTPS em testes ─────────────────────────────────────
 SECURE_SSL_REDIRECT = False

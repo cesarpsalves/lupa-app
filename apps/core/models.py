@@ -3,6 +3,7 @@
 `TimestampedModel` → `created_at` / `updated_at` automáticos.
 `TenantModel` → herda `Timestamped` + FK obrigatória pra Company + manager filtrado.
 """
+
 from __future__ import annotations
 
 from django.db import models

@@ -4,6 +4,7 @@ Uso:
     python manage.py seed_demo --email admin@lupasolucoes.com
     python manage.py seed_demo --email admin@lupasolucoes.com --clean
 """
+
 from __future__ import annotations
 
 import random
@@ -84,21 +85,17 @@ class Command(BaseCommand):
         email = options["email"]
         clean = options["clean"]
 
-        User = get_user_model()
+        user_model = get_user_model()
         try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist as e:
+            user = user_model.objects.get(email=email)
+        except user_model.DoesNotExist as e:
             raise CommandError(f"Usuário não encontrado: {email}") from e
 
         membership = (
-            Membership.objects.filter(user=user, is_active=True)
-            .select_related("company")
-            .first()
+            Membership.objects.filter(user=user, is_active=True).select_related("company").first()
         )
         if membership is None:
-            raise CommandError(
-                f"{email} não tem empresa. Faça o onboarding primeiro."
-            )
+            raise CommandError(f"{email} não tem empresa. Faça o onboarding primeiro.")
         company: Company = membership.company
         self.stdout.write(f"Empresa: {company.name} (#{company.pk})")
 
@@ -141,7 +138,7 @@ class Command(BaseCommand):
             # ── Atendimentos: distribuídos no passado/futuro próximos ──
             now = timezone.now()
             tickets_created = 0
-            for i in range(12):
+            for _ in range(12):
                 client = random.choice(clients)
                 service = random.choice(services)
                 # data: -20 a +14 dias

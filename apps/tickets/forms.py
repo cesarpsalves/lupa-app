@@ -9,8 +9,6 @@ from django.utils import timezone
 from apps.catalog.models import Service
 from apps.clients.models import Client
 
-from .models import Ticket
-
 
 class TicketWizardStepClient(forms.Form):
     client = forms.ModelChoiceField(
@@ -43,7 +41,9 @@ class TicketWizardStepServices(forms.Form):
     def __init__(self, *args, company=None, **kwargs):
         super().__init__(*args, **kwargs)
         if company is not None:
-            self.fields["services"].queryset = Service.objects.filter(is_active=True).order_by("name")
+            self.fields["services"].queryset = Service.objects.filter(is_active=True).order_by(
+                "name"
+            )
 
 
 class TicketWizardStepSchedule(forms.Form):
@@ -77,7 +77,7 @@ class TicketWizardStepSchedule(forms.Form):
     )
 
     def clean(self) -> dict:
-        cleaned = super().clean()
+        cleaned = super().clean() or {}
         d = cleaned.get("scheduled_date")
         t = cleaned.get("scheduled_time")
         if d and t:

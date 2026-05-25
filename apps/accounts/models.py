@@ -3,6 +3,7 @@
 Define o modelo desde o commit 0 (trocar AbstractUser depois do primeiro
 migrate é doloroso — sempre custom user no Django, regra de ouro).
 """
+
 from __future__ import annotations
 
 from django.contrib.auth.models import AbstractUser, BaseUserManager
@@ -15,21 +16,21 @@ from apps.core.models import TimestampedModel
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
-    def _create_user(self, email: str, password: str | None, **extra) -> "User":
+    def _create_user(self, email: str, password: str | None, **extra) -> User:
         if not email:
             raise ValueError("Email é obrigatório.")
         email = self.normalize_email(email)
         user = self.model(email=email, **extra)
         user.set_password(password)
         user.save(using=self._db)
-        return user
+        return user  # type: ignore[return-value]
 
-    def create_user(self, email: str, password: str | None = None, **extra) -> "User":
+    def create_user(self, email: str, password: str | None = None, **extra) -> User:
         extra.setdefault("is_staff", False)
         extra.setdefault("is_superuser", False)
         return self._create_user(email, password, **extra)
 
-    def create_superuser(self, email: str, password: str, **extra) -> "User":
+    def create_superuser(self, email: str, password: str, **extra) -> User:
         extra.setdefault("is_staff", True)
         extra.setdefault("is_superuser", True)
         if extra.get("is_staff") is not True:
@@ -47,7 +48,7 @@ class User(AbstractUser):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name"]
 
-    objects = UserManager()  # type: ignore[misc]
+    objects = UserManager()  # type: ignore[assignment]
 
     class Meta:
         verbose_name = _("usuário")

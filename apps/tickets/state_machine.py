@@ -2,6 +2,7 @@
 
 Transições legítimas. Tentativas inválidas levantam `InvalidTransition`.
 """
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -32,12 +33,12 @@ class InvalidTransition(Exception):
 
 @transaction.atomic
 def transition(
-    ticket: "Ticket",
+    ticket: Ticket,
     *,
     to: str,
-    user: "User | None" = None,
+    user: User | None = None,
     note: str = "",
-) -> "Ticket":
+) -> Ticket:
     """Move o ticket para o novo status, registra no log e retorna o ticket
     atualizado. Side-effects (criar cupom, marcar pagamento) ficam em signals."""
     allowed = TRANSITIONS.get(ticket.status, set())

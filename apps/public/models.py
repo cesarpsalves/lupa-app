@@ -3,6 +3,7 @@
 `WaitlistEntry` registra interesse de prestadores em nichos ainda não
 ativados. Quando atinge `LUPA_WAITLIST_THRESHOLD`, o nicho entra no roadmap.
 """
+
 from __future__ import annotations
 
 from django.db import models

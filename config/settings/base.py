@@ -3,6 +3,7 @@
 Tudo aqui é lido de env vars via django-environ. Sem segredos hardcoded.
 Cada ambiente (dev/prod/test) só sobrescreve o necessário.
 """
+
 from __future__ import annotations
 
 from pathlib import Path

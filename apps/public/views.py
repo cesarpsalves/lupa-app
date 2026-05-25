@@ -20,10 +20,26 @@ ACTIVE_NICHES = [
 ]
 
 STEPS = [
-    {"number": "01", "title": "Agende", "body": "Cadastre cliente, serviço e horário em menos de 1 minuto."},
-    {"number": "02", "title": "Cobre o sinal", "body": "Defina a porcentagem padrão. Saldo registrado pra cobrar depois."},
-    {"number": "03", "title": "Atenda", "body": "Marque como concluído, receba o saldo, gere o cupom em PDF."},
-    {"number": "04", "title": "Acompanhe", "body": "Caixa atualizado em tempo real. Lucro do mês num toque."},
+    {
+        "number": "01",
+        "title": "Agende",
+        "body": "Cadastre cliente, serviço e horário em menos de 1 minuto.",
+    },
+    {
+        "number": "02",
+        "title": "Cobre o sinal",
+        "body": "Defina a porcentagem padrão. Saldo registrado pra cobrar depois.",
+    },
+    {
+        "number": "03",
+        "title": "Atenda",
+        "body": "Marque como concluído, receba o saldo, gere o cupom em PDF.",
+    },
+    {
+        "number": "04",
+        "title": "Acompanhe",
+        "body": "Caixa atualizado em tempo real. Lucro do mês num toque.",
+    },
 ]
 
 
@@ -82,5 +98,3 @@ def waitlist_subscribe(request: HttpRequest) -> HttpResponse:
             status=422,
         )
     return landing(request)
-
-

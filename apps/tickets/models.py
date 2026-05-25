@@ -3,6 +3,7 @@
 Um atendimento agrega cliente + serviços + agendamento + pagamentos.
 Estado controlado por máquina de estado (ver state_machine.py).
 """
+
 from __future__ import annotations
 
 from decimal import Decimal
@@ -69,9 +70,7 @@ class Ticket(TenantModel):
     discount = models.DecimalField(
         "desconto", max_digits=10, decimal_places=2, default=Decimal("0.00")
     )
-    total = models.DecimalField(
-        "total", max_digits=10, decimal_places=2, default=Decimal("0.00")
-    )
+    total = models.DecimalField("total", max_digits=10, decimal_places=2, default=Decimal("0.00"))
 
     metadata = models.JSONField("dados extras", default=dict, blank=True)
 
@@ -122,9 +121,7 @@ class TicketItem(TenantModel):
 
 
 class TicketStatusLog(TenantModel):
-    ticket = models.ForeignKey(
-        Ticket, on_delete=models.CASCADE, related_name="status_logs"
-    )
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="status_logs")
     from_status = models.CharField(max_length=20)
     to_status = models.CharField(max_length=20)
     user = models.ForeignKey(

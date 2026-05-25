@@ -28,10 +28,10 @@ django-template-partials>=24.4
 django-anymail[resend]>=11.1,<12.0
 
 # ──────────── Documentos / PDF ────────────
-weasyprint>=62.0,<63.0
+weasyprint>=68.0  # 62.x tinha CVE-2025-68616
 
 # ──────────── Imagens (uploads de logo) ────────────
-Pillow>=10.4,<11.0
+Pillow>=12.2  # 10.x e 11.x tinham várias CVEs
 
 # ──────────── Tasks ────────────
 django-q2>=1.7,<2.0

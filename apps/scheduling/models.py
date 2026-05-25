@@ -1,4 +1,5 @@
 """Agenda — eventos vinculados (ou não) a atendimentos."""
+
 from __future__ import annotations
 
 from django.db import models

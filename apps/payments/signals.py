@@ -1,4 +1,5 @@
 """Quando um Payment vira `paid`, registra automaticamente entrada no caixa."""
+
 from __future__ import annotations
 
 from django.db.models.signals import post_save
@@ -9,7 +10,7 @@ from .models import Payment, PaymentKind, PaymentStatus
 
 
 @receiver(post_save, sender=Payment)
-def sync_cashflow_on_payment_paid(sender, instance: Payment, **kwargs) -> None:  # noqa: ARG001
+def sync_cashflow_on_payment_paid(sender, instance: Payment, **kwargs) -> None:
     """Cria/atualiza CashflowEntry quando o pagamento muda para `paid`.
 
     Devolução (`refund`) gera saída. Demais kinds geram entrada.
@@ -27,9 +28,7 @@ def sync_cashflow_on_payment_paid(sender, instance: Payment, **kwargs) -> None: 
         return
 
     direction = (
-        CashflowDirection.OUT
-        if instance.kind == PaymentKind.REFUND
-        else CashflowDirection.IN
+        CashflowDirection.OUT if instance.kind == PaymentKind.REFUND else CashflowDirection.IN
     )
     description = f"{instance.get_kind_display()} — {instance.ticket.code}"
     occurred_at = (instance.paid_at or timezone.now()).date()

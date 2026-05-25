@@ -3,6 +3,7 @@
 Esses testes são o portão de segurança do multi-tenant. Se algum quebrar,
 NÃO se faz merge — o risco é vazamento entre clientes.
 """
+
 from __future__ import annotations
 
 import pytest

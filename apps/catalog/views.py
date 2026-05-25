@@ -1,4 +1,5 @@
 """CRUD HTMX do Catálogo de Serviços."""
+
 from __future__ import annotations
 
 from django.contrib import messages

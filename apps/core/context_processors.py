@@ -1,4 +1,5 @@
 """Context processors disponíveis em todos os templates."""
+
 from __future__ import annotations
 
 from django.http import HttpRequest

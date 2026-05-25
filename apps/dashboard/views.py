@@ -1,4 +1,5 @@
 """Dashboard interno + onboarding."""
+
 from __future__ import annotations
 
 from datetime import timedelta
@@ -14,7 +15,7 @@ from django.utils import timezone
 from apps.cashflow.models import CashflowDirection, CashflowEntry
 from apps.catalog.models import Service
 from apps.clients.models import Client
-from apps.companies.models import Company, Membership, NichePreset, Role
+from apps.companies.models import Membership, NichePreset, Role
 from apps.core.tenant import set_current_company
 from apps.payments.models import Payment, PaymentStatus
 from apps.scheduling.models import ScheduleEvent
@@ -38,13 +39,10 @@ def dashboard(request: HttpRequest) -> HttpResponse:
     week_end = today + timedelta(days=6)
 
     # Faturamento do mês: entradas do caixa.
-    revenue_month = (
-        CashflowEntry.objects.filter(
-            occurred_at__gte=month_start,
-            direction=CashflowDirection.IN,
-        ).aggregate(total=Sum("amount"))["total"]
-        or Decimal("0.00")
-    )
+    revenue_month = CashflowEntry.objects.filter(
+        occurred_at__gte=month_start,
+        direction=CashflowDirection.IN,
+    ).aggregate(total=Sum("amount"))["total"] or Decimal("0.00")
 
     # A receber: pagamentos pendentes.
     pending_aggregate = Payment.objects.filter(status=PaymentStatus.PENDING).aggregate(
@@ -130,8 +128,10 @@ def onboarding(request: HttpRequest) -> HttpResponse:
             niche = NichePreset.objects.filter(is_active=True).first()
             if niche is None:
                 niche = NichePreset.objects.create(
-                    slug="fotografo", name="Fotógrafo",
-                    ticket_label="Ensaio", is_active=True,
+                    slug="fotografo",
+                    name="Fotógrafo",
+                    ticket_label="Ensaio",
+                    is_active=True,
                 )
             company = form.save(commit=False)
             company.niche = niche

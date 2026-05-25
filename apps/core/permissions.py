@@ -1,8 +1,9 @@
 """Decorators e helpers de RBAC por papel dentro da empresa."""
+
 from __future__ import annotations
 
+from collections.abc import Callable
 from functools import wraps
-from typing import Callable
 
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied

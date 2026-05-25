@@ -1,4 +1,5 @@
 """Fixtures globais disponíveis em todos os testes."""
+
 from __future__ import annotations
 
 import pytest

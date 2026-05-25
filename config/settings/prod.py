@@ -1,4 +1,5 @@
 """Configurações de produção. Falha fechado em segredos ausentes."""
+
 from __future__ import annotations
 
 from .base import *  # noqa: F403

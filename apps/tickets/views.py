@@ -1,4 +1,5 @@
 """Atendimentos — lista, detalhe, wizard de criação, transições."""
+
 from __future__ import annotations
 
 from datetime import datetime, timedelta
@@ -66,12 +67,15 @@ def ticket_detail(request: HttpRequest, pk: int) -> HttpResponse:
     if not getattr(request, "company", None):
         return redirect("app:onboarding")
     ticket = get_object_or_404(
-        Ticket.objects.select_related("client").prefetch_related("items", "payments", "status_logs"),
+        Ticket.objects.select_related("client").prefetch_related(
+            "items", "payments", "status_logs"
+        ),
         pk=pk,
     )
 
     # transições permitidas (pra render dos botões)
     from .state_machine import TRANSITIONS
+
     allowed = sorted(TRANSITIONS.get(ticket.status, set()))
 
     return render(
@@ -188,7 +192,12 @@ def ticket_new_services(request: HttpRequest) -> HttpResponse:
     return render(
         request,
         "tickets/wizard_step.html",
-        {"form": form, "step": 2, "step_title": "Quais serviços?", "back_url": "tickets:new_client"},
+        {
+            "form": form,
+            "step": 2,
+            "step_title": "Quais serviços?",
+            "back_url": "tickets:new_client",
+        },
     )
 
 
@@ -203,9 +212,8 @@ def ticket_new_schedule(request: HttpRequest) -> HttpResponse:
         return redirect("tickets:new_services")
 
     # Pré-popula duração com soma das services
-    total_duration = (
-        Service.objects.filter(pk__in=state["service_ids"])
-        .values_list("duration_minutes", flat=True)
+    total_duration = Service.objects.filter(pk__in=state["service_ids"]).values_list(
+        "duration_minutes", flat=True
     )
     duration_default = sum(total_duration) or 60
 
@@ -221,7 +229,9 @@ def ticket_new_schedule(request: HttpRequest) -> HttpResponse:
     else:
         today = timezone.localdate()
         initial = {
-            "scheduled_date": state.get("scheduled_at", today.isoformat())[:10] if state.get("scheduled_at") else today.isoformat(),
+            "scheduled_date": state.get("scheduled_at", today.isoformat())[:10]
+            if state.get("scheduled_at")
+            else today.isoformat(),
             "duration_minutes": state.get("duration_minutes", duration_default),
             "location": state.get("location", ""),
             "notes": state.get("notes", ""),
@@ -231,7 +241,12 @@ def ticket_new_schedule(request: HttpRequest) -> HttpResponse:
     return render(
         request,
         "tickets/wizard_step.html",
-        {"form": form, "step": 3, "step_title": "Quando vai acontecer?", "back_url": "tickets:new_services"},
+        {
+            "form": form,
+            "step": 3,
+            "step_title": "Quando vai acontecer?",
+            "back_url": "tickets:new_services",
+        },
     )
 
 
@@ -293,7 +308,9 @@ def ticket_new_payment(request: HttpRequest) -> HttpResponse:
 
                 # Pagamentos
                 if mode == "deposit_balance":
-                    deposit_amount = (ticket.total * Decimal(deposit_pct) / Decimal(100)).quantize(Decimal("0.01"))
+                    deposit_amount = (ticket.total * Decimal(deposit_pct) / Decimal(100)).quantize(
+                        Decimal("0.01")
+                    )
                     balance_amount = (ticket.total - deposit_amount).quantize(Decimal("0.01"))
                     Payment.objects.create(
                         company=company,

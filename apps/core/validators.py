@@ -3,6 +3,7 @@
 Algoritmos oficiais — não confiar em regex bonita.
 Frontend espelha em static/js/masks.js, mas backend é a fonte da verdade.
 """
+
 from __future__ import annotations
 
 import re
@@ -34,9 +35,7 @@ def is_valid_cpf(value: str) -> bool:
         return False
     if _cpf_check_digit(cpf[:9], range(10, 1, -1)) != int(cpf[9]):
         return False
-    if _cpf_check_digit(cpf[:10], range(11, 1, -1)) != int(cpf[10]):
-        return False
-    return True
+    return _cpf_check_digit(cpf[:10], range(11, 1, -1)) == int(cpf[10])
 
 
 def format_cpf(value: str) -> str:
@@ -63,9 +62,7 @@ def is_valid_cnpj(value: str) -> bool:
     w2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
     if _cnpj_check_digit(cnpj[:12], w1) != int(cnpj[12]):
         return False
-    if _cnpj_check_digit(cnpj[:13], w2) != int(cnpj[13]):
-        return False
-    return True
+    return _cnpj_check_digit(cnpj[:13], w2) == int(cnpj[13])
 
 
 def format_cnpj(value: str) -> str:
@@ -130,9 +127,7 @@ def is_valid_phone(value: str) -> bool:
     if digits[0] == "0" or digits[1] == "0":
         return False
     # Móvel começa com 9
-    if len(digits) == 11 and digits[2] != "9":
-        return False
-    return True
+    return not (len(digits) == 11 and digits[2] != "9")
 
 
 def format_phone(value: str) -> str:

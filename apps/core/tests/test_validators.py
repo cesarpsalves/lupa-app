@@ -1,4 +1,5 @@
 """Bateria de testes pra garantir que os validators não regridem."""
+
 from __future__ import annotations
 
 import pytest
@@ -16,17 +17,16 @@ from apps.core.validators import (
     validate_cpf_or_cnpj,
 )
 
-
 # CPFs válidos conhecidos (verificadores corretos):
 VALID_CPFS = ["52998224725", "11144477735", "390.533.447-05"]
 INVALID_CPFS = [
-    "12345678901",      # check digits errados
-    "11111111111",      # sequência
-    "00000000000",      # zeros
-    "529.982.247-26",   # último dígito errado
-    "529.982.247",      # incompleto
-    "abcdefghijk",      # não-numérico
-    "",                 # vazio
+    "12345678901",  # check digits errados
+    "11111111111",  # sequência
+    "00000000000",  # zeros
+    "529.982.247-26",  # último dígito errado
+    "529.982.247",  # incompleto
+    "abcdefghijk",  # não-numérico
+    "",  # vazio
 ]
 
 VALID_CNPJS = ["11444777000161", "11.222.333/0001-81"]
@@ -100,8 +100,8 @@ def test_valid_phone(phone):
     "phone",
     [
         "1234",
-        "(00) 91234-5678",   # DDD começando com 0
-        "(11) 81234-5678",   # móvel sem 9
+        "(00) 91234-5678",  # DDD começando com 0
+        "(11) 81234-5678",  # móvel sem 9
         "",
     ],
 )

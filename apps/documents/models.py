@@ -1,4 +1,5 @@
 """Documentos gerados — cupons, contratos."""
+
 from __future__ import annotations
 
 import secrets
