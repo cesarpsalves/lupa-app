@@ -31,8 +31,13 @@ urlpatterns = [
     ),
 ]
 
+# Estáticos: servidos por WhiteNoise (middleware) em qualquer ambiente.
+# Mídia: WhiteNoise não cobre uploads dinâmicos, então adicionamos a view
+# do Django pra MEDIA_URL. Trade-off conhecido (Django serve direto sem
+# nginx); aceitável pro MVP até migrar pra Cloudflare R2.
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     try:
         import debug_toolbar
 

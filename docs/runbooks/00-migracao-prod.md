@@ -40,16 +40,14 @@ Executa o [01-vps-hardening.md](./01-vps-hardening.md). Resumo:
 
 ### 🟢 Fase 3 — Deploy (eu, ~15 min)
 
-Executo o [02-deploy.md](./02-deploy.md):
-1. Instalar Docker + Compose no VPS
-2. Clone do repo em `/opt/lupa`
-3. Gerar `.env` com secrets em `/etc/lupa/lupa.env` (modo bootstrap: HTTPS off)
-4. Subir Postgres `lupa_v2` (isolado do Supabase legado), Redis e web
-5. Migrate + collectstatic (rodam no entrypoint) + criar superuser
-6. Subir Nginx em **modo bootstrap** (HTTP-only, sem SSL — pra Certbot poder fazer ACME challenge depois)
-7. Smoke test pelo IP: `curl -H "Host: lupasolucoes.com" http://31.97.26.125/healthz` → 200
+> **Cenário real (descoberto na auditoria):** o VPS já hospeda ~30 projetos via Traefik (`/opt/traefik`). LUPA vira mais um projeto Docker se conectando à network externa `traefik-public`. Traefik termina TLS e emite Let's Encrypt automaticamente.
 
-✅ Aviso quando estiver pronto.
+Executo o [02-deploy.md](./02-deploy.md):
+1. Criar `/opt/lupa` + `/etc/lupa` + clonar repo
+2. Gerar `lupa.env` com secrets (Resend API key + senhas geradas)
+3. `docker compose pull + up` (db + redis + web). Entrypoint roda migrate + collectstatic
+4. Criar superuser
+5. Smoke test: `curl https://lupasolucoes.com/healthz` → 200 (Traefik emite cert automaticamente no primeiro hit)
 
 ### 🟡 Fase 4 — Trocar DNS (você, ~5 min) — **AQUI COMEÇA O DOWNTIME**
 
@@ -64,14 +62,15 @@ No painel Hostinger (gerenciamento de DNS do domínio):
 
 ✅ Avisa quando trocar.
 
-### 🟢 Fase 5 — Certbot HTTPS + switch (eu, ~5 min)
+### 🟢 Fase 5 — TLS automático via Traefik (eu, ~1 min)
 
-Quando o DNS já estiver propagado pra alguns nodes (testo com `dig @8.8.8.8` e `dig @1.1.1.1`):
+Traefik detecta o container `lupa-web` pelas labels Docker e dispara o desafio Let's Encrypt HTTP-01 no primeiro request HTTPS. Nada manual:
+
 ```
-sudo certbot certonly --webroot -w /var/www/certbot \
-  -d lupasolucoes.com -d www.lupasolucoes.com
+curl -sSI https://lupasolucoes.com/healthz
+# Pode demorar 30–60s no primeiríssimo hit enquanto LE emite o cert.
+# Renovação automática a cada 90 dias, gerenciada pelo Traefik.
 ```
-Cert emitido via challenge HTTP-01 servido pelo nginx bootstrap. Daí edito `/etc/lupa/lupa.env` ligando `SECURE_SSL_REDIRECT=True`, `NGINX_CONF=nginx.conf` e faço `docker compose up -d --force-recreate web nginx`. HTTPS no ar + redirect HTTP → HTTPS automático.
 
 ### 🟢 Fase 6 — Smoke test público (eu)
 
