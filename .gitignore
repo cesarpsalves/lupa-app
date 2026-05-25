@@ -53,6 +53,7 @@ local_settings.py
 .pytest_cache/
 .coverage
 .coverage.*
+.coverage*
 htmlcov/
 .tox/
 .nox/
