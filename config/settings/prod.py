@@ -7,13 +7,12 @@ from .base import env
 
 DEBUG = False
 
-# ── HTTPS obrigatório ───────────────────────────────────────
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-SECURE_HSTS_SECONDS = env("SECURE_HSTS_SECONDS", default=31_536_000)  # 1 ano
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
+# ── HTTPS ───────────────────────────────────────────────────
+# SECURE_SSL_REDIRECT e SECURE_HSTS_SECONDS já vêm de env() via base.py.
+# Em prod o env-file setta True/31536000. Durante o bootstrap do primeiro
+# deploy (HTTP-only, antes do Certbot), o env-file de bootstrap setta False/0.
+SESSION_COOKIE_SECURE = env.bool("SESSION_COOKIE_SECURE", default=True)
+CSRF_COOKIE_SECURE = env.bool("CSRF_COOKIE_SECURE", default=True)
 
 # ── Email via Resend ────────────────────────────────────────
 EMAIL_BACKEND = "anymail.backends.resend.EmailBackend"

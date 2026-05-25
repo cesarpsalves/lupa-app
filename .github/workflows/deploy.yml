@@ -12,7 +12,15 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    # Só roda quando:
+    # 1) CI terminou com sucesso, E
+    # 2) a Repository Variable DEPLOY_ENABLED == 'true' (setada em
+    #    Settings → Secrets and variables → Actions → Variables, depois
+    #    que os secrets VPS_* já foram configurados).
+    # Antes disso, o job é pulado em vez de falhar.
+    if: |
+      github.event.workflow_run.conclusion == 'success' &&
+      vars.DEPLOY_ENABLED == 'true'
     environment: production
     steps:
       - name: SSH deploy
@@ -24,12 +32,12 @@ jobs:
           port: ${{ secrets.VPS_PORT }}
           script: |
             set -euo pipefail
-            cd ~/lupa
+            cd /opt/lupa
             git fetch --all
             git reset --hard origin/main
             export LUPA_TAG=${{ github.event.workflow_run.head_sha }}
-            docker compose -f docker/docker-compose.prod.yml pull web
-            docker compose -f docker/docker-compose.prod.yml up -d --remove-orphans
+            docker compose -f docker/docker-compose.prod.yml --env-file /etc/lupa/lupa.env pull web
+            docker compose -f docker/docker-compose.prod.yml --env-file /etc/lupa/lupa.env up -d --remove-orphans
 
             echo "▶ Smoke test"
             sleep 5

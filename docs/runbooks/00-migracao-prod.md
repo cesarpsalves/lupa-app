@@ -43,11 +43,11 @@ Executa o [01-vps-hardening.md](./01-vps-hardening.md). Resumo:
 Executo o [02-deploy.md](./02-deploy.md):
 1. Instalar Docker + Compose no VPS
 2. Clone do repo em `/opt/lupa`
-3. Gerar `.env` com secrets em `/etc/lupa/lupa.env`
-4. Subir Postgres `lupa_v2` (isolado do Supabase legado)
-5. Migrate + collectstatic + criar superuser
-6. Subir Nginx **escutando na porta 80** (Certbot vai precisar antes do HTTPS)
-7. Smoke test no IP direto: `curl http://31.97.26.125` deve retornar 200
+3. Gerar `.env` com secrets em `/etc/lupa/lupa.env` (modo bootstrap: HTTPS off)
+4. Subir Postgres `lupa_v2` (isolado do Supabase legado), Redis e web
+5. Migrate + collectstatic (rodam no entrypoint) + criar superuser
+6. Subir Nginx em **modo bootstrap** (HTTP-only, sem SSL — pra Certbot poder fazer ACME challenge depois)
+7. Smoke test pelo IP: `curl -H "Host: lupasolucoes.com" http://31.97.26.125/healthz` → 200
 
 ✅ Aviso quando estiver pronto.
 
@@ -64,13 +64,14 @@ No painel Hostinger (gerenciamento de DNS do domínio):
 
 ✅ Avisa quando trocar.
 
-### 🟢 Fase 5 — Certbot HTTPS (eu, ~5 min)
+### 🟢 Fase 5 — Certbot HTTPS + switch (eu, ~5 min)
 
 Quando o DNS já estiver propagado pra alguns nodes (testo com `dig @8.8.8.8` e `dig @1.1.1.1`):
 ```
-certbot --nginx -d lupasolucoes.com -d www.lupasolucoes.com
+sudo certbot certonly --webroot -w /var/www/certbot \
+  -d lupasolucoes.com -d www.lupasolucoes.com
 ```
-Emite cert. Configura redirect HTTP → HTTPS.
+Cert emitido via challenge HTTP-01 servido pelo nginx bootstrap. Daí edito `/etc/lupa/lupa.env` ligando `SECURE_SSL_REDIRECT=True`, `NGINX_CONF=nginx.conf` e faço `docker compose up -d --force-recreate web nginx`. HTTPS no ar + redirect HTTP → HTTPS automático.
 
 ### 🟢 Fase 6 — Smoke test público (eu)
 

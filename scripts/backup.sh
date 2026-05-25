@@ -4,7 +4,7 @@
 # ════════════════════════════════════════════════════════════
 #
 # Configurar no crontab do VPS (como `paulo`):
-#   0 3 * * * /home/paulo/lupa/scripts/backup.sh >> /var/log/lupa-backup.log 2>&1
+#   0 3 * * * /opt/lupa/scripts/backup.sh >> /var/log/lupa-backup.log 2>&1
 #
 set -euo pipefail
 
@@ -19,7 +19,7 @@ STAMP=$(date +%F_%H%M)
 OUT="$BACKUP_DIR/lupa_${STAMP}.sql.gz"
 
 echo "▶ Iniciando dump → $OUT"
-docker compose -f /home/paulo/lupa/docker/docker-compose.prod.yml \
+docker compose -f /opt/lupa/docker/docker-compose.prod.yml \
     exec -T db pg_dump -U "$DB_USER" -Fc "$DB_NAME" | gzip > "$OUT"
 
 echo "▶ Removendo backups mais antigos que $RETENTION_DAYS dias"

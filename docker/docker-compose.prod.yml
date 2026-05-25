@@ -24,7 +24,7 @@ services:
       interval: 10s
 
   web:
-    image: ghcr.io/pauloalves/lupa:${LUPA_TAG:-latest}
+    image: ghcr.io/cesarpsalves/lupa:${LUPA_TAG:-latest}
     restart: unless-stopped
     env_file: /etc/lupa/lupa.env
     depends_on:
@@ -32,6 +32,9 @@ services:
       redis: { condition: service_healthy }
     expose:
       - "8000"
+    volumes:
+      - lupa-static:/app/staticfiles
+      - lupa-media:/app/media
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8000/healthz"]
       interval: 30s
@@ -47,8 +50,11 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/lupa.conf:ro
+      # NGINX_CONF aponta pra nginx.conf (HTTPS) OU nginx.bootstrap.conf (HTTP-only,
+      # usado no primeiro setup antes do Certbot emitir o cert).
+      - ./${NGINX_CONF:-nginx.conf}:/etc/nginx/conf.d/lupa.conf:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/www/certbot:/var/www/certbot:ro
       - lupa-static:/var/www/static:ro
       - lupa-media:/var/www/media:ro
 
