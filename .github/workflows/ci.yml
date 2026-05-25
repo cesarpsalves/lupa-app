@@ -17,6 +17,15 @@ jobs:
   quality:
     name: Lint + Type + Security
     runs-on: ubuntu-latest
+
+    # django-stubs (carregado pelo mypy via pyproject.toml) importa
+    # config.settings.dev → base.py, que exige DJANGO_SECRET_KEY.
+    # Sem essa env aqui, mypy explode ao introspect settings.
+    env:
+      DJANGO_SECRET_KEY: "ci-quality-key-not-for-prod"
+      DATABASE_URL: "sqlite:///:memory:"
+      REDIS_URL: "redis://localhost:6379/0"
+
     steps:
       - uses: actions/checkout@v4
 
