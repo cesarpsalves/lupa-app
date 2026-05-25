@@ -21,9 +21,10 @@ Internet → Traefik :80/:443 → lupa-web:8000 → gunicorn → Django
 
 Sem nginx próprio. Estáticos servidos por WhiteNoise (já no middleware), media servida pelo Django (`django.conf.urls.static`).
 
-**Convenções de path:**
-- Código: `/opt/lupa`
-- Env de prod: `/etc/lupa/lupa.env` (chmod 600, fora do repo)
+**Convenções de path** (mesmas dos outros projetos do VPS, ex: `/opt/.env.carsena`, `/opt/update-carsena.sh`):
+- Código: `/opt/lupa/`
+- Env de prod: `/opt/.env.lupa` (root:root, chmod 600)
+- Script de deploy: `/opt/update-lupa.sh` → symlink pra `/opt/lupa/scripts/deploy-vps.sh`
 - Backups: `/var/backups/lupa/`
 - Dados: volumes Docker nomeados (`lupa-pgdata`, `lupa-static`, `lupa-media`)
 
@@ -48,9 +49,8 @@ Já instalado no VPS (parte da stack existente). `paulo` adicionado ao grupo `do
 ## Etapa 2 — Estrutura
 
 ```bash
-sudo mkdir -p /opt/lupa /etc/lupa /var/backups/lupa
-sudo chown paulo:paulo /opt/lupa /etc/lupa /var/backups/lupa
-sudo chmod 700 /etc/lupa
+sudo mkdir -p /opt/lupa /var/backups/lupa
+sudo chown paulo:paulo /opt/lupa /var/backups/lupa
 ```
 
 ---
@@ -66,16 +66,15 @@ Repo é público; sem token necessário.
 
 ---
 
-## Etapa 4 — Gerar `/etc/lupa/lupa.env`
+## Etapa 4 — Gerar `/opt/.env.lupa`
 
 ```bash
-# Secrets aleatórios
 SECRET_KEY=$(python3 -c 'from secrets import token_urlsafe; print(token_urlsafe(50))')
 DB_PASS=$(python3 -c 'from secrets import token_urlsafe; print(token_urlsafe(32))')
 
-# Escreve o env (chmod 600)
-sudo install -m 600 -o paulo -g paulo /dev/null /etc/lupa/lupa.env
-nano /etc/lupa/lupa.env
+# root:root chmod 600 (padrão dos outros /opt/.env.*)
+sudo install -m 600 -o root -g root /dev/null /opt/.env.lupa
+sudo nano /opt/.env.lupa
 ```
 
 Conteúdo:
@@ -87,7 +86,6 @@ DJANGO_DEBUG=False
 DJANGO_ALLOWED_HOSTS=lupasolucoes.com,www.lupasolucoes.com,lupa-web
 DJANGO_CSRF_TRUSTED_ORIGINS=https://lupasolucoes.com,https://www.lupasolucoes.com
 
-# Postgres (container interno)
 DATABASE_URL=postgres://lupa_app:<DB_PASS gerado>@db:5432/lupa_v2
 POSTGRES_DB=lupa_v2
 POSTGRES_USER=lupa_app
@@ -95,61 +93,66 @@ POSTGRES_PASSWORD=<DB_PASS gerado>
 
 REDIS_URL=redis://redis:6379/0
 
-# Email (Resend)
 EMAIL_BACKEND=anymail.backends.resend.EmailBackend
 RESEND_API_KEY=re_xxxxxxxxxxxxxxxx
 DEFAULT_FROM_EMAIL=LUPA Soluções <nao-responda@lupasolucoes.com>
 
-# HTTPS (Traefik termina TLS, mas redireciona e seta X-Forwarded-Proto=https)
 SECURE_SSL_REDIRECT=True
 SECURE_HSTS_SECONDS=31536000
 SESSION_COOKIE_SECURE=True
 CSRF_COOKIE_SECURE=True
 
-# Aplicação
 LUPA_DEFAULT_SIGNAL_PCT=50
 LUPA_WAITLIST_THRESHOLD=15
 
-# Observabilidade
 SENTRY_DSN=
 SENTRY_ENVIRONMENT=production
 
-# Tag da imagem
 LUPA_TAG=latest
 ```
 
 ---
 
-## Etapa 5 — Garantir network `traefik-public` + login GHCR
+## Etapa 5 — Instalar script de deploy + GHCR
 
 ```bash
+# Symlink no padrão dos outros /opt/update-*.sh
+sudo ln -sf /opt/lupa/scripts/deploy-vps.sh /opt/update-lupa.sh
+sudo chmod +x /opt/lupa/scripts/deploy-vps.sh
+
+# Network do Traefik (idempotente)
 docker network inspect traefik-public >/dev/null 2>&1 || docker network create traefik-public
 
-# Imagem do LUPA é privada? Verificar visibilidade do package no GHCR.
-# Se for pública: pull funciona sem login.
-# Se for privada: docker login ghcr.io -u cesarpsalves
+# Imagem GHCR: tornar package público em
+#   https://github.com/users/cesarpsalves/packages/container/lupa/settings
+# (alternativa: docker login ghcr.io -u cesarpsalves com PAT read:packages)
 ```
 
 ---
 
-## Etapa 6 — Pull + up
+## Etapa 6 — Deploy
 
 ```bash
-cd /opt/lupa
-docker compose -f docker/docker-compose.prod.yml --env-file /etc/lupa/lupa.env pull
-docker compose -f docker/docker-compose.prod.yml --env-file /etc/lupa/lupa.env up -d
-docker compose -f docker/docker-compose.prod.yml --env-file /etc/lupa/lupa.env ps
+sudo /opt/update-lupa.sh
 ```
 
-O entrypoint do container `web` roda `migrate` + `collectstatic --clear` automaticamente. WhiteNoise serve estáticos via gunicorn. Traefik detecta o container pelas labels e emite cert TLS no primeiro request HTTPS (Let's Encrypt HTTP-01 challenge).
+O script faz:
+1. `git fetch + reset --hard origin/main`
+2. `docker compose pull web` (puxa imagem do GHCR)
+3. `docker compose up -d --remove-orphans`
+4. Espera `lupa-web` ficar healthy (até 60s)
+5. Smoke test interno em `/healthz`
+
+O entrypoint do container roda migrate + collectstatic. WhiteNoise serve estáticos. Traefik emite cert TLS Let's Encrypt no primeiro request HTTPS.
 
 ---
 
 ## Etapa 7 — Superuser
 
 ```bash
-docker compose -f docker/docker-compose.prod.yml --env-file /etc/lupa/lupa.env \
+docker compose -p lupa -f /opt/lupa/docker/docker-compose.prod.yml --env-file /opt/.env.lupa \
   exec web python manage.py createsuperuser
+# Email: paulo.agoravai@gmail.com
 ```
 
 ---
@@ -187,7 +190,9 @@ ls -lh /var/backups/lupa/
 
 ## Etapa 10 — GitHub Actions deploy contínuo
 
-No GitHub (`Settings → Secrets and variables → Actions`):
+⚠ O `deploy.yml` precisa rodar `sudo /opt/update-lupa.sh` no VPS (em vez de comandos docker diretamente como está hoje). TODO depois do MVP no ar: atualizar `.github/workflows/deploy.yml` pra invocar o script.
+
+Por enquanto, no GitHub (`Settings → Secrets and variables → Actions`):
 
 **Aba "Secrets" (environment "production"):**
 
@@ -212,8 +217,10 @@ A guarda `vars.DEPLOY_ENABLED == 'true'` no `deploy.yml` evita que pushs sem sec
 
 - [ ] Docker disponível pra paulo ✅
 - [ ] `/opt/lupa` clonado
-- [ ] `/etc/lupa/lupa.env` com secrets reais (chmod 600)
+- [ ] `/opt/.env.lupa` (root:root chmod 600) com secrets reais
+- [ ] `/opt/update-lupa.sh` symlink criado
 - [ ] Network `traefik-public` existe
+- [ ] Imagem GHCR pública (ou `docker login` feito)
 - [ ] Postgres + Redis + Web no ar
 - [ ] Migrate + collectstatic OK (rodam no entrypoint)
 - [ ] Superuser criado
@@ -221,7 +228,7 @@ A guarda `vars.DEPLOY_ENABLED == 'true'` no `deploy.yml` evita que pushs sem sec
 - [ ] `https://lupasolucoes.com/healthz` → 200
 - [ ] Redirect HTTP → HTTPS funciona
 - [ ] Backup diário no cron
-- [ ] GitHub Actions deploy configurado
+- [ ] GitHub Actions deploy configurado (após atualizar deploy.yml pra usar script)
 
 ---
 
@@ -230,14 +237,14 @@ A guarda `vars.DEPLOY_ENABLED == 'true'` no `deploy.yml` evita que pushs sem sec
 ```bash
 cd /opt/lupa
 export LUPA_TAG=<sha-anterior>
-docker compose -f docker/docker-compose.prod.yml --env-file /etc/lupa/lupa.env up -d --force-recreate web
+docker compose -p lupa -f docker/docker-compose.prod.yml --env-file /opt/.env.lupa up -d --force-recreate web
 
 # Migration anterior (se a nova quebrou)
-docker compose -f docker/docker-compose.prod.yml --env-file /etc/lupa/lupa.env \
+docker compose -p lupa -f docker/docker-compose.prod.yml --env-file /opt/.env.lupa \
   exec web python manage.py migrate <app> <migration_anterior>
 
 # Restaurar backup
 gunzip -c /var/backups/lupa/lupa_<data>.sql.gz | \
-  docker compose -f docker/docker-compose.prod.yml --env-file /etc/lupa/lupa.env \
+  docker compose -p lupa -f docker/docker-compose.prod.yml --env-file /opt/.env.lupa \
   exec -T db pg_restore -U lupa_app -d lupa_v2 --clean --if-exists
 ```

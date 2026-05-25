@@ -2,14 +2,14 @@
 # (reverse proxy do VPS que serve ~30 projetos). Traefik faz SSL via
 # Let's Encrypt (resolver "le", HTTP-01 challenge).
 #
-# Variáveis sensíveis em /etc/lupa/lupa.env (chmod 600).
+# Variáveis sensíveis em /opt/.env.lupa (chmod 600).
 # Imagem buildada pelo CI e publicada em ghcr.io/cesarpsalves/lupa:<tag>.
 
 services:
   db:
     image: postgres:16-alpine
     restart: unless-stopped
-    env_file: /etc/lupa/lupa.env
+    env_file: /opt/.env.lupa
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-lupa_v2}
       POSTGRES_USER: ${POSTGRES_USER:-lupa_app}
@@ -36,7 +36,7 @@ services:
     image: ghcr.io/cesarpsalves/lupa:${LUPA_TAG:-latest}
     container_name: lupa-web
     restart: unless-stopped
-    env_file: /etc/lupa/lupa.env
+    env_file: /opt/.env.lupa
     depends_on:
       db: { condition: service_healthy }
       redis: { condition: service_healthy }

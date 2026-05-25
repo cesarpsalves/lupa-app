@@ -19,7 +19,7 @@ STAMP=$(date +%F_%H%M)
 OUT="$BACKUP_DIR/lupa_${STAMP}.sql.gz"
 
 echo "▶ Iniciando dump → $OUT"
-docker compose -f /opt/lupa/docker/docker-compose.prod.yml \
+docker compose -p lupa -f /opt/lupa/docker/docker-compose.prod.yml --env-file /opt/.env.lupa \
     exec -T db pg_dump -U "$DB_USER" -Fc "$DB_NAME" | gzip > "$OUT"
 
 echo "▶ Removendo backups mais antigos que $RETENTION_DAYS dias"
