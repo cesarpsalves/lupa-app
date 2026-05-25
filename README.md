@@ -93,7 +93,7 @@ Construído sobre um **schema genérico** que se adapta ao nicho via configuraç
 | **Deploy** | Docker Compose + GHA + SSH | Simples, portátil, reversível |
 | **Obs** | Sentry + healthcheck + Healthchecks.io | MVP barato e funcional |
 
-→ Detalhes e tradeoffs em [docs/06-adr/](../docs/06-adr/).
+→ Detalhes e tradeoffs em [docs/06-adr/](docs/06-adr/).
 
 ---
 
@@ -128,7 +128,7 @@ Shared database, shared schema com `company_id` em toda tabela de tenant. Enforc
 
 Testado em [`apps/core/tests/test_tenant_isolation.py`](apps/core/tests/test_tenant_isolation.py) e [`apps/clients/tests/test_clients.py`](apps/clients/tests/test_clients.py).
 
-→ ADR completo: [docs/06-adr/0002-multitenant-shared-schema.md](../docs/06-adr/0002-multitenant-shared-schema.md).
+→ ADR completo: [docs/06-adr/0002-multitenant-shared-schema.md](docs/06-adr/0002-multitenant-shared-schema.md).
 
 ---
 
@@ -232,10 +232,10 @@ make shell          # Django shell_plus
 - **django-otp** — TOTP 2FA opcional pro usuário, obrigatório pra owner em produção
 - **HSTS + CSP + X-Frame-Options + Referrer-Policy** em produção
 - **Multi-tenant fail-closed** (manager retorna `none()` sem tenant ativo)
-- **LGPD** — endpoints de exportar e excluir dados pessoais ([docs/04-security.md §7](../docs/04-security.md))
+- **LGPD** — endpoints de exportar e excluir dados pessoais ([docs/04-security.md §7](docs/04-security.md))
 - **Validação real de CPF/CNPJ** — algoritmo oficial dos dígitos verificadores, espelhado backend+frontend
 
-→ Plano completo: [docs/04-security.md](../docs/04-security.md).
+→ Plano completo: [docs/04-security.md](docs/04-security.md).
 
 ---
 
@@ -263,7 +263,7 @@ Regras concretas aplicadas em todo template:
 | **v1.5** | Galeria de entrega, contrato com assinatura simples, agenda multiusuário (L2), relatórios financeiros | 🚧 Em planejamento |
 | **v2** | Loja/PDV (L3), WhatsApp bot escopo fechado, NFS-e SP, 2º nicho ativo | 📅 Mês 6-9 |
 
-→ Detalhe em [docs/05-roadmap.md](../docs/05-roadmap.md) *(em construção)*.
+→ Detalhe em [docs/05-roadmap.md](docs/05-roadmap.md) *(em construção)*.
 
 ---
 
@@ -271,11 +271,11 @@ Regras concretas aplicadas em todo template:
 
 | Doc | Resumo |
 |---|---|
-| [PRD](../docs/01-prd.md) | Visão, escopo v1, princípios, anti-escopo |
-| [User Journey](../docs/02-user-journey.md) | Fluxo de telas do fotógrafo L1 ponta a ponta |
-| [Arquitetura](../docs/03-architecture.md) | Stack, modelo de dados, multi-tenant, deploy |
-| [Segurança](../docs/04-security.md) | Threat model, secrets, hardening, LGPD |
-| [ADRs](../docs/06-adr/) | Decisões técnicas com tradeoffs registrados |
+| [PRD](docs/01-prd.md) | Visão, escopo v1, princípios, anti-escopo |
+| [User Journey](docs/02-user-journey.md) | Fluxo de telas do fotógrafo L1 ponta a ponta |
+| [Arquitetura](docs/03-architecture.md) | Stack, modelo de dados, multi-tenant, deploy |
+| [Segurança](docs/04-security.md) | Threat model, secrets, hardening, LGPD |
+| [ADRs](docs/06-adr/) | Decisões técnicas com tradeoffs registrados |
 
 ---
 
@@ -284,7 +284,7 @@ Regras concretas aplicadas em todo template:
 **Paulo Alves** — Engenheiro de Software (Brasil)
 [GitHub](https://github.com/cesarpsalves) · [LinkedIn](https://www.linkedin.com/in/pauloalvesdev/) · contato@lupasolucoes.com
 
-Esse projeto é uma vitrine de engenharia: **um produto pequeno feito bem feito vale mais do que um produto enorme feito errado**. É uma lição que aprendi do jeito difícil refazendo este app — a história completa está em [docs/01-prd.md §10](../docs/01-prd.md#10-riscos-e-mitigações).
+Esse projeto é uma vitrine de engenharia: **um produto pequeno feito bem feito vale mais do que um produto enorme feito errado**. É uma lição que aprendi do jeito difícil refazendo este app — a história completa está em [docs/01-prd.md §10](docs/01-prd.md#10-riscos-e-mitigações).
 
 ## 📄 Licença
 
