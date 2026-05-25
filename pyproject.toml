@@ -50,6 +50,14 @@ ignore = [
 quote-style = "double"
 indent-style = "space"
 
+[tool.bandit]
+# Skips globais:
+#   B101 (assert_used) — testes usam asserts o tempo todo
+#   B311 (random module) — usado só em seed_demo pra dados fake;
+#       código de produção que precisa de aleatoriedade segura usa secrets
+exclude_dirs = ["tests", "*/tests/*", "*/migrations/*"]
+skips = ["B101", "B311"]
+
 [tool.mypy]
 python_version = "3.12"
 strict = false
