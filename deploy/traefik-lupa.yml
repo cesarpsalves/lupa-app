@@ -1,0 +1,38 @@
+# Config dinâmica do Traefik pra rotear lupasolucoes.com → lupa-web:8000.
+# Versionada aqui porque o Traefik desse VPS usa "providers.file" (não Docker),
+# então labels no compose são ignoradas e a fonte da verdade do roteamento
+# vive em /opt/traefik/dynamic/lupa.yml.
+#
+# O scripts/deploy-vps.sh copia este arquivo pra /opt/traefik/dynamic/lupa.yml
+# a cada deploy (Traefik recarrega automaticamente — watch: true).
+
+http:
+  routers:
+    # HTTP → HTTPS redirect
+    lupa-http:
+      rule: "Host(`lupasolucoes.com`) || Host(`www.lupasolucoes.com`)"
+      entryPoints: [web]
+      service: lupa
+      middlewares: [lupa-redirect-https]
+
+    # HTTPS com Let's Encrypt (resolver "le" do /opt/traefik/traefik.yml)
+    lupa:
+      rule: "Host(`lupasolucoes.com`) || Host(`www.lupasolucoes.com`)"
+      entryPoints: [websecure]
+      service: lupa
+      tls:
+        certResolver: le
+
+  middlewares:
+    lupa-redirect-https:
+      redirectScheme:
+        scheme: https
+        permanent: true
+
+  services:
+    lupa:
+      loadBalancer:
+        servers:
+          # Traefik vê o container pela network compartilhada traefik-public.
+          # Porta 8000 do gunicorn (definida no Dockerfile EXPOSE).
+          - url: "http://lupa-web:8000"

@@ -51,33 +51,10 @@ services:
     networks:
       - lupa-internal
       - traefik-public
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=traefik-public"
-
-      # HTTP → HTTPS redirect
-      - "traefik.http.routers.lupa-http.rule=Host(`lupasolucoes.com`) || Host(`www.lupasolucoes.com`)"
-      - "traefik.http.routers.lupa-http.entrypoints=web"
-      - "traefik.http.routers.lupa-http.middlewares=lupa-redirect-https"
-      - "traefik.http.middlewares.lupa-redirect-https.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.lupa-redirect-https.redirectscheme.permanent=true"
-
-      # HTTPS (Traefik termina TLS, Django recebe HTTP interno)
-      - "traefik.http.routers.lupa.rule=Host(`lupasolucoes.com`) || Host(`www.lupasolucoes.com`)"
-      - "traefik.http.routers.lupa.entrypoints=websecure"
-      - "traefik.http.routers.lupa.tls=true"
-      - "traefik.http.routers.lupa.tls.certresolver=le"
-      - "traefik.http.services.lupa.loadbalancer.server.port=8000"
-
-      # Security headers + X-Forwarded-Proto pro Django saber que é HTTPS
-      - "traefik.http.routers.lupa.middlewares=lupa-headers"
-      - "traefik.http.middlewares.lupa-headers.headers.customRequestHeaders.X-Forwarded-Proto=https"
-      - "traefik.http.middlewares.lupa-headers.headers.customResponseHeaders.X-Frame-Options=DENY"
-      - "traefik.http.middlewares.lupa-headers.headers.customResponseHeaders.X-Content-Type-Options=nosniff"
-      - "traefik.http.middlewares.lupa-headers.headers.customResponseHeaders.Referrer-Policy=same-origin"
-      - "traefik.http.middlewares.lupa-headers.headers.stsSeconds=31536000"
-      - "traefik.http.middlewares.lupa-headers.headers.stsIncludeSubdomains=true"
-      - "traefik.http.middlewares.lupa-headers.headers.stsPreload=true"
+    # Roteamento Traefik via FILE provider em /opt/traefik/dynamic/lupa.yml
+    # (copiado de deploy/traefik-lupa.yml pelo deploy-vps.sh). O Traefik deste
+    # VPS não tem providers.docker habilitado, então labels Docker são
+    # ignoradas — por isso a config vive como arquivo, não como label.
 
 volumes:
   lupa-pgdata:

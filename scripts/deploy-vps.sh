@@ -37,6 +37,18 @@ docker network inspect traefik-public >/dev/null 2>&1 || {
     docker network create traefik-public
 }
 
+# Config dinâmica do Traefik (file provider — labels Docker são ignoradas
+# nesse VPS). Idempotente: só copia se o arquivo no repo for diferente.
+TRAEFIK_DYNAMIC="/opt/traefik/dynamic/lupa.yml"
+TRAEFIK_SOURCE="$APP_DIR/deploy/traefik-lupa.yml"
+if [[ -f "$TRAEFIK_SOURCE" ]]; then
+    if ! cmp -s "$TRAEFIK_SOURCE" "$TRAEFIK_DYNAMIC" 2>/dev/null; then
+        echo "▶ Atualizando $TRAEFIK_DYNAMIC"
+        cp "$TRAEFIK_SOURCE" "$TRAEFIK_DYNAMIC"
+        # Traefik recarrega automaticamente (watch: true)
+    fi
+fi
+
 # ── Atualizar código ─────────────────────────────────────────
 cd "$APP_DIR"
 echo "▶ Atualizando $APP_DIR"
