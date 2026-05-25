@@ -6,6 +6,7 @@
 {% url 'app:more' as more_url %}
 {% url 'scheduling:day' as agenda_url %}
 {% url 'tickets:list' as tickets_url %}
+{% url 'cashflow:list' as cashflow_url %}
 <nav aria-label="Navegação principal"
      class="fixed bottom-0 inset-x-0 z-40 border-t
             border-slate-200 bg-white/95 backdrop-blur
@@ -53,12 +54,12 @@
       </a>
     </li>
 
-    {# Caixa (em breve) #}
+    {# Caixa #}
     <li>
-      <a href="#"
-         class="bottom-nav-item flex flex-col items-center justify-center gap-1 py-3 tap-target
-                text-slate-400 dark:text-slate-600 cursor-not-allowed"
-         aria-disabled="true" title="Em breve">
+      <a href="{{ cashflow_url }}"
+         {% if "/caixa/" in request.path %}aria-current="page"{% endif %}
+         class="bottom-nav-item flex flex-col items-center justify-center gap-1 py-3 tap-target transition-colors
+                {% if '/caixa/' in request.path %}text-lupa-500 dark:text-lupa-300 font-medium{% else %}text-slate-600 dark:text-slate-400 hover:text-lupa-500{% endif %}">
         <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
         </svg>

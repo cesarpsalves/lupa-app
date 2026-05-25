@@ -1,0 +1,175 @@
+{% extends "app_base.html" %}
+
+{% block title %}Caixa — LUPA Soluções{% endblock %}
+
+{% block content %}
+<section class="page-enter mx-auto max-w-5xl px-4 sm:px-6 py-5 sm:py-10">
+
+  <header class="flex items-start justify-between gap-3 flex-wrap">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+        Caixa
+      </h1>
+      <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+        Entradas dos atendimentos + saídas manuais.
+      </p>
+    </div>
+    <a href="{% url 'cashflow:create' %}"
+       class="tap-target btn-press inline-flex items-center gap-2 rounded-full
+              bg-lupa-500 px-5 py-2.5 text-sm font-medium text-white
+              hover:bg-lupa-600 active:scale-95 transition-all
+              shadow-sm hover:shadow-md hover:shadow-lupa-500/20">
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 5v14M5 12h14"/>
+      </svg>
+      Novo movimento
+    </a>
+  </header>
+
+  {# Resumo do período #}
+  <div class="mt-6 grid gap-3 sm:gap-4 grid-cols-3">
+    <div class="card-lift rounded-2xl border p-4 sm:p-5
+                border-emerald-200 bg-emerald-50/50
+                dark:border-emerald-900/40 dark:bg-emerald-950/20">
+      <div class="flex items-center justify-between">
+        <p class="text-[10px] sm:text-[11px] font-medium uppercase tracking-wider
+                  text-emerald-700 dark:text-emerald-300">Entradas</p>
+        <svg class="h-4 w-4 text-emerald-600 dark:text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 19V5M5 12l7-7 7 7"/>
+        </svg>
+      </div>
+      <p class="mt-2 text-xl sm:text-2xl font-bold text-emerald-700 dark:text-emerald-300">
+        R$ {{ income|floatformat:2 }}
+      </p>
+    </div>
+
+    <div class="card-lift rounded-2xl border p-4 sm:p-5
+                border-red-200 bg-red-50/50
+                dark:border-red-900/40 dark:bg-red-950/20">
+      <div class="flex items-center justify-between">
+        <p class="text-[10px] sm:text-[11px] font-medium uppercase tracking-wider
+                  text-red-700 dark:text-red-300">Saídas</p>
+        <svg class="h-4 w-4 text-red-600 dark:text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 5v14M19 12l-7 7-7-7"/>
+        </svg>
+      </div>
+      <p class="mt-2 text-xl sm:text-2xl font-bold text-red-700 dark:text-red-300">
+        R$ {{ expense|floatformat:2 }}
+      </p>
+    </div>
+
+    <div class="card-lift rounded-2xl border p-4 sm:p-5
+                {% if balance >= 0 %}border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900/60
+                {% else %}border-amber-200 bg-amber-50/50 dark:border-amber-900/40 dark:bg-amber-950/20{% endif %}">
+      <p class="text-[10px] sm:text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+        Saldo
+      </p>
+      <p class="mt-2 text-xl sm:text-2xl font-bold
+                {% if balance >= 0 %}text-slate-900 dark:text-white{% else %}text-amber-700 dark:text-amber-300{% endif %}">
+        R$ {{ balance|floatformat:2 }}
+      </p>
+    </div>
+  </div>
+
+  {# Filtros: período + direção #}
+  <div class="mt-6 flex flex-wrap items-center gap-2 text-xs">
+    {% for label, qs_start, qs_end in quick_periods %}
+      <a href="?from={{ qs_start|date:'Y-m-d' }}&to={{ qs_end|date:'Y-m-d' }}"
+         class="rounded-full px-3 py-1.5 border transition-colors
+                {% if start == qs_start and end == qs_end %}
+                  bg-lupa-500 border-lupa-500 text-white
+                {% else %}
+                  border-slate-300 text-slate-600 hover:bg-slate-100
+                  dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-900
+                {% endif %}">
+        {{ label }}
+      </a>
+    {% endfor %}
+    <span class="text-slate-400 dark:text-slate-500 ml-2">
+      {{ start|date:"d/m" }} → {{ end|date:"d/m/Y" }}
+    </span>
+  </div>
+
+  {# Lista de movimentos #}
+  <div class="mt-6">
+    {% if entries %}
+      <div class="rounded-2xl border overflow-hidden
+                  border-slate-200 bg-white
+                  dark:border-slate-800 dark:bg-slate-900/60">
+        <ul class="divide-y divide-slate-100 dark:divide-slate-800">
+          {% for e in entries %}
+            <li class="flex items-center justify-between gap-3 px-4 sm:px-5 py-3.5">
+              <div class="flex items-center gap-3 min-w-0">
+                <span class="grid h-10 w-10 shrink-0 place-items-center rounded-full
+                             {% if e.direction == 'in' %}
+                               bg-emerald-500/10 text-emerald-600 dark:text-emerald-400
+                             {% else %}
+                               bg-red-500/10 text-red-600 dark:text-red-400
+                             {% endif %}">
+                  {% if e.direction == "in" %}
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M12 19V5M5 12l7-7 7 7"/>
+                    </svg>
+                  {% else %}
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M12 5v14M19 12l-7 7-7-7"/>
+                    </svg>
+                  {% endif %}
+                </span>
+                <div class="min-w-0">
+                  <p class="text-sm font-medium text-slate-900 dark:text-white truncate">
+                    {{ e.description }}
+                  </p>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">
+                    {{ e.occurred_at|date:"d/m/Y" }}
+                    {% if e.category %} &middot; {{ e.category }}{% endif %}
+                    {% if e.payment %} &middot; <span class="text-lupa-500">do atendimento</span>{% endif %}
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 shrink-0">
+                <span class="text-sm font-semibold
+                             {% if e.direction == 'in' %}text-emerald-700 dark:text-emerald-300{% else %}text-red-700 dark:text-red-300{% endif %}">
+                  {% if e.direction == "in" %}+{% else %}−{% endif %}R$ {{ e.amount|floatformat:2 }}
+                </span>
+                {% if not e.payment %}
+                  <form action="{% url 'cashflow:delete' e.pk %}" method="post"
+                        onsubmit="return confirm('Remover este movimento?')" class="inline">
+                    {% csrf_token %}
+                    <button type="submit"
+                            class="tap-target inline-flex h-9 w-9 items-center justify-center rounded-full
+                                   text-slate-400 hover:bg-slate-100 hover:text-red-500
+                                   dark:hover:bg-slate-900 transition-colors"
+                            aria-label="Remover">
+                      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+                      </svg>
+                    </button>
+                  </form>
+                {% endif %}
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% else %}
+      <div class="rounded-2xl border-2 border-dashed p-8 sm:p-12 text-center
+                  border-slate-300 bg-white
+                  dark:border-slate-700 dark:bg-slate-900/30">
+        <div class="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full
+                    bg-lupa-500/10 text-lupa-500 dark:text-lupa-300 text-2xl">
+          💰
+        </div>
+        <p class="mt-4 text-sm font-medium text-slate-900 dark:text-white">
+          Nenhum movimento no período.
+        </p>
+        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          Pagamentos confirmados nos atendimentos entram aqui automaticamente.
+        </p>
+      </div>
+    {% endif %}
+  </div>
+
+</section>
+{% endblock %}

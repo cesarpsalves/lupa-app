@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Cupom {{ ticket.code }} — {{ ticket.company.name }}{% endblock %}
+
+{% block header %}{# Esconde header do app na página pública #}{% endblock %}
+{% block footer %}{# Esconde footer também #}{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-2xl px-4 sm:px-6 py-10 sm:py-16">
+  <div class="text-center mb-8">
+    <img src="{% static 'img/logo.svg' %}" alt="LUPA Soluções" class="h-12 w-12 mx-auto" />
+    <h1 class="mt-4 text-2xl font-bold text-slate-900 dark:text-white">
+      Cupom de serviço
+    </h1>
+    <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+      Emitido por <span class="font-semibold">{{ ticket.company.name }}</span>
+    </p>
+  </div>
+
+  <div class="rounded-2xl border p-6 sm:p-8 shadow-sm
+              border-slate-200 bg-white
+              dark:border-slate-800 dark:bg-slate-900/50">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <p class="text-[10px] uppercase tracking-wider text-slate-500">Código</p>
+        <p class="font-mono text-sm text-slate-900 dark:text-white">{{ ticket.code }}</p>
+      </div>
+      <a href="{% url 'documents:receipt_public_download' document.public_token %}"
+         class="tap-target inline-flex items-center gap-2 rounded-full bg-lupa-500
+                px-5 py-2.5 text-sm font-medium text-white hover:bg-lupa-600 transition-colors">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Baixar PDF
+      </a>
+    </div>
+
+    <hr class="border-slate-200 dark:border-slate-800 mb-6" />
+
+    <p class="text-sm text-slate-600 dark:text-slate-400">Cliente</p>
+    <p class="mt-1 font-medium text-slate-900 dark:text-white">{{ ticket.client.name }}</p>
+
+    <p class="mt-5 text-sm text-slate-600 dark:text-slate-400">Atendimento</p>
+    {% if ticket.scheduled_at %}
+      <p class="mt-1 text-slate-900 dark:text-white">
+        {{ ticket.scheduled_at|date:"j \d\e F" }} às {{ ticket.scheduled_at|time:"H:i" }}
+      </p>
+    {% endif %}
+
+    <p class="mt-5 text-sm text-slate-600 dark:text-slate-400">Itens</p>
+    <ul class="mt-2 space-y-1">
+      {% for item in ticket.items.all %}
+        <li class="flex justify-between text-sm">
+          <span class="text-slate-700 dark:text-slate-300">{{ item.description }}</span>
+          <span class="font-medium text-slate-900 dark:text-white">R$ {{ item.total|floatformat:2 }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+
+    <hr class="border-slate-200 dark:border-slate-800 my-6" />
+
+    <div class="flex justify-between text-base font-bold">
+      <span class="text-slate-900 dark:text-white">Total</span>
+      <span class="text-slate-900 dark:text-white">R$ {{ ticket.total|floatformat:2 }}</span>
+    </div>
+  </div>
+
+  <p class="mt-8 text-center text-xs text-slate-500">
+    Emitido eletronicamente. Sem valor fiscal.<br/>
+    <a href="{% url 'public:landing' %}" class="hover:underline">Powered by LUPA Soluções</a>
+  </p>
+</section>
+{% endblock %}
