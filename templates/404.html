@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Página não encontrada — LUPA Soluções{% endblock %}
+
+{% block content %}
+<section class="page-enter mx-auto max-w-md px-4 sm:px-6 py-16 sm:py-24 text-center">
+  <p class="text-7xl sm:text-8xl font-bold tracking-tight text-lupa-500 dark:text-lupa-300">404</p>
+  <h1 class="mt-4 text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+    Página não encontrada
+  </h1>
+  <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">
+    O link pode estar quebrado, a página foi movida, ou você digitou o endereço errado.
+  </p>
+  <a href="{% url 'public:landing' %}"
+     class="tap-target btn-press mt-8 inline-flex items-center gap-2 rounded-full
+            bg-lupa-500 px-5 py-2.5 text-sm font-medium text-white
+            hover:bg-lupa-600 transition-all shadow-md shadow-lupa-500/20">
+    Voltar para o início
+  </a>
+</section>
+{% endblock %}

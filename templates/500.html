@@ -1,0 +1,31 @@
+{% load static %}<!DOCTYPE html>
+{# Página 500 standalone: NÃO usa context_processors (que podem ser a causa do erro) #}
+<html lang="pt-br" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#2c3d8c" />
+  <title>Erro interno — LUPA Soluções</title>
+  <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }, colors: { lupa: { 500: '#2c3d8c', 600: '#243373' } } } } };
+    (function () { if (localStorage.getItem('lupa-theme') === 'dark' || (!localStorage.getItem('lupa-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark'); })();
+  </script>
+</head>
+<body class="min-h-full font-sans antialiased bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+  <section class="mx-auto max-w-md px-4 sm:px-6 py-16 sm:py-24 text-center">
+    <p class="text-7xl sm:text-8xl font-bold tracking-tight text-lupa-500">500</p>
+    <h1 class="mt-4 text-2xl sm:text-3xl font-bold tracking-tight">Algo deu errado do nosso lado</h1>
+    <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">
+      Já registramos o erro e vamos investigar. Tente recarregar em instantes.
+    </p>
+    <a href="/" class="mt-8 inline-flex items-center justify-center gap-2 rounded-full
+            bg-lupa-500 px-5 py-2.5 text-sm font-medium text-white
+            hover:bg-lupa-600 transition-colors">
+      Voltar para o início
+    </a>
+  </section>
+</body>
+</html>
