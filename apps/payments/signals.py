@@ -31,7 +31,9 @@ def sync_cashflow_on_payment_paid(sender, instance: Payment, **kwargs) -> None:
         CashflowDirection.OUT if instance.kind == PaymentKind.REFUND else CashflowDirection.IN
     )
     description = f"{instance.get_kind_display()} — {instance.ticket.code}"
-    occurred_at = (instance.paid_at or timezone.now()).date()
+    # Usa localdate (timezone settings.TIME_ZONE) em vez de .date() que retorna
+    # UTC date — pagamento feito 23h em SP estava caindo em "amanhã" no caixa.
+    occurred_at = timezone.localdate(instance.paid_at or timezone.now())
     category = instance.kind
 
     if existing:
