@@ -1,16 +1,35 @@
 {% load static %}<!DOCTYPE html>
-<html lang="pt-br" class="h-full">
+<html lang="pt-BR" class="h-full">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#2c3d8c" />
+
+  {# ── SEO básico ── #}
+  <title>{% block title %}LUPA Soluções — Gestão pra prestadores de serviço{% endblock %}</title>
   <meta name="description" content="{% block meta_description %}LUPA Soluções — Sistema de gestão para prestadores de serviço. Agenda, atendimentos, cupons e caixa num só app.{% endblock %}" />
   <meta name="application-name" content="LUPA Soluções" />
   <meta name="apple-mobile-web-app-title" content="LUPA Soluções" />
-  <meta property="og:title" content="LUPA Soluções — Gestão pra prestadores de serviço" />
-  <meta property="og:description" content="Agenda, atendimentos, cupons e caixa — num só app." />
-  <meta property="og:type" content="website" />
-  <title>{% block title %}LUPA Soluções — Gestão pra prestadores de serviço{% endblock %}</title>
+  <link rel="canonical" href="{% block canonical_url %}{{ request.build_absolute_uri|cut:'?'|cut:'#' }}{% endblock %}" />
+
+  {# ── Open Graph (Facebook, LinkedIn, WhatsApp) ── #}
+  <meta property="og:site_name" content="LUPA Soluções" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:type" content="{% block og_type %}website{% endblock %}" />
+  <meta property="og:title" content="{% block og_title %}LUPA Soluções — Gestão pra prestadores de serviço{% endblock %}" />
+  <meta property="og:description" content="{% block og_description %}Agenda, atendimentos, cupons e caixa — num só app.{% endblock %}" />
+  <meta property="og:url" content="{% block og_url %}{{ request.build_absolute_uri }}{% endblock %}" />
+  <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/og-cover.png' %}{% endblock %}" />
+  <meta property="og:image:alt" content="LUPA Soluções — Sistema de gestão" />
+
+  {# ── Twitter Cards ── #}
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="{% block twitter_title %}{{ block.super }}{% endblock %}" />
+  <meta name="twitter:description" content="{% block twitter_description %}{{ block.super }}{% endblock %}" />
+  <meta name="twitter:image" content="{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/og-cover.png' %}{% endblock %}" />
+
+  {# ── Indexação ── #}
+  <meta name="robots" content="{% block robots %}index, follow, max-image-preview:large{% endblock %}" />
 
   <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}" />
   <link rel="apple-touch-icon" href="{% static 'img/logo.svg' %}" />
@@ -55,6 +74,36 @@
   <script src="{% static 'js/masks.js' %}" defer></script>
 
   {% block extra_head %}{% endblock %}
+
+  {# ── Structured data: Organization (sempre presente) ── #}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "LUPA Soluções",
+    "alternateName": "LUPA",
+    "url": "https://lupasolucoes.com",
+    "logo": "https://lupasolucoes.com{% static 'img/logo.svg' %}",
+    "description": "Sistema de gestão para prestadores de serviço. Agenda, atendimentos, cupons e caixa num só app.",
+    "areaServed": "BR",
+    "inLanguage": "pt-BR",
+    "founder": {
+      "@type": "Person",
+      "name": "Paulo Alves",
+      "url": "https://www.linkedin.com/in/pauloalvesdev/"
+    },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "email": "contato@lupasolucoes.com",
+      "contactType": "customer support",
+      "availableLanguage": ["pt-BR"]
+    },
+    "sameAs": [
+      "https://github.com/cesarpsalves/lupa-app"
+    ]
+  }
+  </script>
+  {% block schema_org %}{% endblock %}
 </head>
 <body class="min-h-full flex flex-col font-sans antialiased
              bg-slate-50 text-slate-900

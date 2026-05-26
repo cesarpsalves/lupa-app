@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /app/
+Disallow: /contas/
+Disallow: /static/admin/
+
+Sitemap: https://lupasolucoes.com/sitemap.xml

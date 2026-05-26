@@ -37,10 +37,17 @@ DJANGO_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
+    "django.contrib.sites",  # requerido por sitemaps
+    "django.contrib.sitemaps",
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
 ]
+
+# django.contrib.sites: o object Site com SITE_ID=1 é criado por migration.
+# Depois do deploy, atualizar via shell ou admin pra ter domain/name corretos:
+#   Site.objects.filter(id=1).update(domain="lupasolucoes.com", name="LUPA Soluções")
+SITE_ID = 1
 
 THIRD_PARTY_APPS = [
     "django_htmx",
