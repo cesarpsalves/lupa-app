@@ -28,9 +28,7 @@ def _file_uri(path: str | None) -> str | None:
 def render_receipt_html(ticket) -> str:
     """Renderiza o HTML do cupom (pode ser servido como preview também)."""
     # Logo da empresa (ImageField — pode estar vazio se onboarding pulou)
-    company_logo = (
-        _file_uri(ticket.company.logo.path) if ticket.company.logo else None
-    )
+    company_logo = _file_uri(ticket.company.logo.path) if ticket.company.logo else None
     # Logo do LUPA (asset estático — sempre presente)
     lupa_logo = _file_uri(find_static("img/logo.svg"))
 
