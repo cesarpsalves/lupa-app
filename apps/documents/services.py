@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from io import BytesIO
 
+from django.contrib.staticfiles.finders import find as find_static
 from django.core.files.base import ContentFile
 from django.template.loader import render_to_string
 from django.utils import timezone
@@ -17,8 +18,22 @@ from apps.core.validators import format_phone, normalize_document
 from .models import Document, DocumentKind
 
 
+def _file_uri(path: str | None) -> str | None:
+    """Converte path absoluto em file:// URI que WeasyPrint resolve."""
+    if not path:
+        return None
+    return f"file://{path}"
+
+
 def render_receipt_html(ticket) -> str:
     """Renderiza o HTML do cupom (pode ser servido como preview também)."""
+    # Logo da empresa (ImageField — pode estar vazio se onboarding pulou)
+    company_logo = (
+        _file_uri(ticket.company.logo.path) if ticket.company.logo else None
+    )
+    # Logo do LUPA (asset estático — sempre presente)
+    lupa_logo = _file_uri(find_static("img/logo.svg"))
+
     return render_to_string(
         "documents/receipt.html",
         {
@@ -28,6 +43,8 @@ def render_receipt_html(ticket) -> str:
             "items": list(ticket.items.all()),
             "payments": list(ticket.payments.all()),
             "issued_at": timezone.now(),
+            "company_logo": company_logo,
+            "lupa_logo": lupa_logo,
             "company_document_display": normalize_document(ticket.company.document)
             if ticket.company.document
             else "",

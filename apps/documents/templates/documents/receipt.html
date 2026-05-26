@@ -8,7 +8,9 @@
     body { font-family: "Helvetica Neue", Arial, sans-serif; color: #0f172a; font-size: 11pt; }
     h1, h2, h3, h4 { margin: 0; }
     .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #2c3d8c; padding-bottom: 10px; margin-bottom: 18px; }
-    .header .brand { color: #2c3d8c; font-weight: 700; font-size: 14pt; }
+    .header .brand-block { display: flex; align-items: center; gap: 10px; }
+    .header .company-logo { width: 44px; height: 44px; object-fit: contain; border-radius: 8px; }
+    .header .brand { color: #2c3d8c; font-weight: 700; font-size: 14pt; line-height: 1.15; }
     .header .meta { text-align: right; font-size: 9pt; color: #64748b; }
     .badge { display: inline-block; background: #2c3d8c; color: white; padding: 3px 8px; border-radius: 999px; font-size: 8pt; text-transform: uppercase; letter-spacing: 0.08em; }
     .section { margin-bottom: 16px; }
@@ -26,7 +28,9 @@
     .payments td { padding: 5px 0; font-size: 10pt; }
     .payments td.right { text-align: right; }
     .footer { margin-top: 24px; border-top: 1px solid #e2e8f0; padding-top: 10px; font-size: 9pt; color: #64748b; text-align: center; }
-    .footer .powered { margin-top: 6px; font-size: 8pt; }
+    .footer .powered { margin-top: 8px; font-size: 8pt; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .footer .powered .lupa-logo { width: 14px; height: 14px; object-fit: contain; }
+    .footer .powered a { color: #2c3d8c; text-decoration: none; font-weight: 600; }
     .pill-paid { display: inline-block; background: #ecfdf5; color: #065f46; padding: 1px 6px; border-radius: 999px; font-size: 8pt; font-weight: 600; }
     .pill-pending { display: inline-block; background: #fffbeb; color: #92400e; padding: 1px 6px; border-radius: 999px; font-size: 8pt; font-weight: 600; }
   </style>
@@ -34,11 +38,16 @@
 <body>
 
   <div class="header">
-    <div>
-      <div class="brand">{{ company.name }}</div>
-      {% if company_document_display %}
-        <div style="font-size: 9pt; color: #64748b; margin-top: 2px;">CPF/CNPJ: {{ company_document_display }}</div>
+    <div class="brand-block">
+      {% if company_logo %}
+        <img src="{{ company_logo }}" alt="Logo {{ company.name }}" class="company-logo" />
       {% endif %}
+      <div>
+        <div class="brand">{{ company.name }}</div>
+        {% if company_document_display %}
+          <div style="font-size: 9pt; color: #64748b; margin-top: 2px;">CPF/CNPJ: {{ company_document_display }}</div>
+        {% endif %}
+      </div>
     </div>
     <div class="meta">
       <span class="badge">Cupom</span><br/>
@@ -136,7 +145,10 @@
 
   <div class="footer">
     Documento emitido eletronicamente. Não tem valor fiscal.
-    <div class="powered">Gerado por LUPA Soluções &middot; lupasolucoes.com</div>
+    <div class="powered">
+      {% if lupa_logo %}<img src="{{ lupa_logo }}" alt="LUPA" class="lupa-logo" />{% endif %}
+      <span>Gerado por <a href="https://lupasolucoes.com">LUPA Soluções</a></span>
+    </div>
   </div>
 
 </body>
