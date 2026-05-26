@@ -78,11 +78,15 @@ def ticket_detail(request: HttpRequest, pk: int) -> HttpResponse:
 
     allowed = sorted(TRANSITIONS.get(ticket.status, set()))
 
+    # Cupom gerado (se já finalizou) — pra mostrar o link público pro cliente
+    receipt = ticket.documents.filter(kind="receipt").first()
+
     return render(
         request,
         "tickets/detail.html",
         {
             "ticket": ticket,
+            "receipt": receipt,
             "allowed_transitions": allowed,
             "TicketStatus": TicketStatus,
         },

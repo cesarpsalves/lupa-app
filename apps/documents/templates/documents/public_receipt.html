@@ -26,7 +26,7 @@
         <p class="text-[10px] uppercase tracking-wider text-slate-500">Código</p>
         <p class="font-mono text-sm text-slate-900 dark:text-white">{{ ticket.code }}</p>
       </div>
-      <a href="{% url 'documents:receipt_public_download' document.public_token %}"
+      <a href="{% url 'documents_public:receipt_public_download' document.public_token %}"
          class="tap-target inline-flex items-center gap-2 rounded-full bg-lupa-500
                 px-5 py-2.5 text-sm font-medium text-white hover:bg-lupa-600 transition-colors">
         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
