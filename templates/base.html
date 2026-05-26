@@ -22,10 +22,10 @@
   <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/og-cover.png' %}{% endblock %}" />
   <meta property="og:image:alt" content="LUPA Soluções — Sistema de gestão" />
 
-  {# ── Twitter Cards ── #}
+  {# ── Twitter Cards (reaproveita os valores de OG) ── #}
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="{% block twitter_title %}{{ block.super }}{% endblock %}" />
-  <meta name="twitter:description" content="{% block twitter_description %}{{ block.super }}{% endblock %}" />
+  <meta name="twitter:title" content="{% block twitter_title %}LUPA Soluções — Gestão pra prestadores de serviço{% endblock %}" />
+  <meta name="twitter:description" content="{% block twitter_description %}Agenda, atendimentos, cupons e caixa — num só app.{% endblock %}" />
   <meta name="twitter:image" content="{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/og-cover.png' %}{% endblock %}" />
 
   {# ── Indexação ── #}
