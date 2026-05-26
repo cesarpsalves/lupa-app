@@ -115,6 +115,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "apps.core.context_processors.current_company",
+                "apps.core.context_processors.analytics",
             ],
             "builtins": [
                 "template_partials.templatetags.partials",
@@ -235,6 +236,12 @@ Q_CLUSTER = {
     "label": "Django Q",
     "redis": env("REDIS_URL", default="redis://localhost:6379/0"),
 }
+
+# ── Analytics (Umami self-hosted) ───────────────────────────
+# Setar UMAMI_WEBSITE_ID no env-file de prod habilita o snippet no base.html.
+# Em dev/test deixa vazio pra não poluir as métricas.
+UMAMI_WEBSITE_ID = env("UMAMI_WEBSITE_ID", default="")
+UMAMI_HOST = env("UMAMI_HOST", default="https://analytics.lupasolucoes.com")
 
 # ── Sentry ──────────────────────────────────────────────────
 SENTRY_DSN = env("SENTRY_DSN", default="")
