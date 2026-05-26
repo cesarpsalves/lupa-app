@@ -32,14 +32,7 @@ jobs:
           port: ${{ secrets.VPS_PORT }}
           script: |
             set -euo pipefail
-            cd /opt/lupa
-            git fetch --all
-            git reset --hard origin/main
-            export LUPA_TAG=${{ github.event.workflow_run.head_sha }}
-            docker compose -f docker/docker-compose.prod.yml --env-file /etc/lupa/lupa.env pull web
-            docker compose -f docker/docker-compose.prod.yml --env-file /etc/lupa/lupa.env up -d --remove-orphans
-
-            echo "▶ Smoke test"
-            sleep 5
-            curl -fsS https://lupasolucoes.com/healthz || (echo "Healthcheck failed"; exit 1)
-            echo "✓ Deploy concluído"
+            # Delega tudo (git pull, docker compose pull/up, healthcheck) pro
+            # script idempotente que já roda em deploys manuais. paulo tem
+            # NOPASSWD sudo, então funciona em SSH não-interativo.
+            sudo LUPA_TAG=${{ github.event.workflow_run.head_sha }} /opt/update-lupa.sh
