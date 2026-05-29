@@ -8,16 +8,27 @@
 
 http:
   routers:
-    # HTTP → HTTPS redirect
+    # HTTP (qualquer host) → HTTPS
     lupa-http:
       rule: "Host(`lupasolucoes.com`) || Host(`www.lupasolucoes.com`)"
       entryPoints: [web]
       service: lupa
       middlewares: [lupa-redirect-https]
 
-    # HTTPS com Let's Encrypt (resolver "le" do /opt/traefik/traefik.yml)
+    # HTTPS no www → 301 pro apex (evita conteúdo duplicado no Google).
+    # Prioridade maior que o router apex pra garantir match do www primeiro.
+    lupa-www:
+      rule: "Host(`www.lupasolucoes.com`)"
+      priority: 100
+      entryPoints: [websecure]
+      service: lupa
+      tls:
+        certResolver: le
+      middlewares: [lupa-www-to-apex]
+
+    # HTTPS no apex → serve o app
     lupa:
-      rule: "Host(`lupasolucoes.com`) || Host(`www.lupasolucoes.com`)"
+      rule: "Host(`lupasolucoes.com`)"
       entryPoints: [websecure]
       service: lupa
       tls:
@@ -27,6 +38,12 @@ http:
     lupa-redirect-https:
       redirectScheme:
         scheme: https
+        permanent: true
+    # www.lupasolucoes.com/<path> → lupasolucoes.com/<path>
+    lupa-www-to-apex:
+      redirectRegex:
+        regex: "^https://www\\.lupasolucoes\\.com/(.*)"
+        replacement: "https://lupasolucoes.com/${1}"
         permanent: true
 
   services:
