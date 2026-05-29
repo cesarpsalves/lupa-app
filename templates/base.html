@@ -37,8 +37,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-  {# Tailwind buildado localmente (Tailwind CLI no Dockerfile) — substitui o
-     CDN que carregava ~3MB de JS e compilava no browser (ruim pro LCP). #}
+  {# Tailwind buildado localmente (CLI no Dockerfile) em vez do CDN — melhor LCP #}
   <link rel="stylesheet" href="{% static 'css/tailwind.css' %}" />
   <link rel="stylesheet" href="{% static 'css/animations.css' %}" />
 
