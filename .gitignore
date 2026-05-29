@@ -91,6 +91,9 @@ yarn-debug.log*
 yarn-error.log*
 package-lock.json
 
+# CSS buildado pelo Tailwind CLI (gerado no Dockerfile, não versionado)
+/static/css/tailwind.css
+
 # ──────────────────────────────────────────────────
 # Docker
 # ──────────────────────────────────────────────────

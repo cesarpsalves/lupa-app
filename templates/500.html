@@ -8,9 +8,8 @@
   <title>Erro interno — LUPA Soluções</title>
   <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{% static 'css/tailwind.css' %}" />
   <script>
-    tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }, colors: { lupa: { 500: '#2c3d8c', 600: '#243373' } } } } };
     (function () { if (localStorage.getItem('lupa-theme') === 'dark' || (!localStorage.getItem('lupa-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark'); })();
   </script>
 </head>

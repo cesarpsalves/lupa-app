@@ -26,6 +26,27 @@ RUN pip install --upgrade pip pip-tools \
 
 RUN pip install --prefix=/install -r /build/requirements/prod.txt
 
+# ────────── Stage: tailwind (builda o CSS) ──────────
+# Tailwind standalone CLI (binário, sem Node). Escaneia templates+js pra gerar
+# só as classes usadas — substitui o CDN que carregava ~3MB de JS no browser.
+FROM debian:bookworm-slim AS tailwind
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && curl -sSL -o /usr/local/bin/tailwindcss \
+       https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.17/tailwindcss-linux-x64 \
+    && chmod +x /usr/local/bin/tailwindcss
+
+WORKDIR /tw
+# Só o necessário pros content paths do tailwind.config.js
+COPY tailwind.config.js ./
+COPY static/css/input.css ./static/css/input.css
+COPY templates ./templates
+COPY apps ./apps
+COPY static/js ./static/js
+RUN tailwindcss -c tailwind.config.js -i static/css/input.css -o /tw/tailwind.css --minify
+
 # ────────── Stage: runtime ──────────
 FROM python:3.12-slim AS runtime
 
@@ -49,6 +70,8 @@ WORKDIR /app
 
 COPY --from=builder /install /usr/local
 COPY --chown=lupa:lupa . /app
+# CSS buildado pelo stage tailwind (gitignored, então vem só daqui)
+COPY --from=tailwind --chown=lupa:lupa /tw/tailwind.css /app/static/css/tailwind.css
 
 # Diretórios pra estáticos e media. Pré-criados com chown lupa:lupa pra que
 # volumes Docker nomeados herdem essas permissões quando montados vazios.
