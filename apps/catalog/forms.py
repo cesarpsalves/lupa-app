@@ -13,10 +13,10 @@ class ServiceForm(forms.ModelForm):
         max_digits=10,
         decimal_places=2,
         min_value=Decimal("0.00"),
-        widget=forms.NumberInput(
+        localize=True,  # parseia/formata no locale pt-BR (vírgula decimal)
+        widget=forms.TextInput(
             attrs={
                 "placeholder": "0,00",
-                "step": "0.01",
                 "inputmode": "decimal",
             }
         ),

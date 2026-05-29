@@ -35,7 +35,8 @@ class TicketWizardStepServices(forms.Form):
         min_value=Decimal("0"),
         required=False,
         initial=Decimal("0"),
-        widget=forms.NumberInput(attrs={"step": "0.01", "inputmode": "decimal"}),
+        localize=True,  # parseia/formata no locale pt-BR (vírgula decimal)
+        widget=forms.TextInput(attrs={"inputmode": "decimal", "placeholder": "0,00"}),
     )
 
     def __init__(self, *args, company=None, **kwargs):

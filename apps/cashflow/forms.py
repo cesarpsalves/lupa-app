@@ -13,6 +13,8 @@ class CashflowEntryForm(forms.ModelForm):
     class Meta:
         model = CashflowEntry
         fields = ("direction", "amount", "occurred_at", "description", "category")
+        # amount parseado/formatado no locale pt-BR (vírgula decimal)
+        localized_fields = ("amount",)
         labels = {
             "direction": "Tipo",
             "amount": "Valor (R$)",
@@ -22,9 +24,7 @@ class CashflowEntryForm(forms.ModelForm):
         }
         widgets = {
             "direction": forms.RadioSelect,
-            "amount": forms.NumberInput(
-                attrs={"step": "0.01", "inputmode": "decimal", "placeholder": "0,00"}
-            ),
+            "amount": forms.TextInput(attrs={"inputmode": "decimal", "placeholder": "0,00"}),
             "occurred_at": forms.DateInput(attrs={"type": "date"}),
             "description": forms.TextInput(attrs={"placeholder": "Ex.: Combustível"}),
             "category": forms.TextInput(attrs={"placeholder": "Ex.: operacional, equipamento"}),
