@@ -1,0 +1,68 @@
+{% extends "app_base.html" %}
+
+{% block title %}Editar atendimento — LUPA Soluções{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-2xl px-4 sm:px-6 py-6 sm:py-8">
+  <div class="mb-2">
+    <a href="{% url 'tickets:detail' ticket.pk %}"
+       class="text-sm text-slate-500 hover:text-lupa-500 dark:text-slate-400 dark:hover:text-white transition-colors">
+      ← Voltar ao atendimento
+    </a>
+  </div>
+  <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+    Editar atendimento
+  </h1>
+  <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+    {{ ticket.code }} · {{ ticket.client.name }}
+  </p>
+
+  <form method="post" novalidate
+        class="mt-6 grid gap-5 rounded-2xl border p-5 sm:p-6 shadow-sm
+               border-slate-200 bg-white
+               dark:border-slate-800 dark:bg-slate-900/50">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <div role="alert" class="rounded-lg border px-4 py-3 text-sm
+                  border-red-300 bg-red-50 text-red-800
+                  dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-200">
+        {{ form.non_field_errors|join:" " }}
+      </div>
+    {% endif %}
+
+    {% for field in form %}
+      <div>
+        <label for="{{ field.id_for_label }}"
+               class="block text-sm font-medium text-slate-700 dark:text-slate-200">
+          {{ field.label }}
+          {% if field.field.required %}<span class="text-red-500">*</span>{% endif %}
+        </label>
+        <div class="mt-1.5">{{ field }}</div>
+        {% if field.help_text %}
+          <p class="mt-1 text-xs text-slate-500 dark:text-slate-500">{{ field.help_text }}</p>
+        {% endif %}
+        {% if field.errors %}
+          <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ field.errors|join:" " }}</p>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <div class="flex flex-col sm:flex-row gap-3 mt-2">
+      <button type="submit"
+              class="tap-target btn-press inline-flex items-center justify-center gap-2 rounded-full
+                     bg-lupa-500 px-6 py-3 text-sm font-medium text-white
+                     hover:bg-lupa-600 active:scale-95 transition-all shadow-md shadow-lupa-500/20">
+        Salvar alterações
+      </button>
+      <a href="{% url 'tickets:detail' ticket.pk %}"
+         class="tap-target inline-flex items-center justify-center rounded-full border px-6 py-3
+                text-sm font-medium transition-colors
+                border-slate-300 text-slate-700 hover:bg-slate-100
+                dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-900">
+        Cancelar
+      </a>
+    </div>
+  </form>
+</section>
+{% endblock %}

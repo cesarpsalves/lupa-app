@@ -14,6 +14,7 @@ urlpatterns = [
     path("novo/pagamento/", views.ticket_new_payment, name="new_payment"),
     path("novo/cancelar/", views.ticket_wizard_cancel, name="wizard_cancel"),
     path("<int:pk>/", views.ticket_detail, name="detail"),
+    path("<int:pk>/editar/", views.ticket_edit, name="edit"),
     path("<int:pk>/transicao/", views.ticket_transition, name="transition"),
     path("pagamentos/<int:pk>/marcar-pago/", views.payment_mark_paid, name="payment_mark_paid"),
 ]

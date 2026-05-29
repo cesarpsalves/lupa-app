@@ -89,8 +89,68 @@ def ticket_detail(request: HttpRequest, pk: int) -> HttpResponse:
             "receipt": receipt,
             "allowed_transitions": allowed,
             "TicketStatus": TicketStatus,
+            "is_editable": ticket.status in _EDITABLE_STATUSES,
         },
     )
+
+
+# Estados em que data/hora/local/notas ainda podem ser editados. Depois de
+# concluído/finalizado/cancelado o atendimento é imutável (cupom já emitido).
+_EDITABLE_STATUSES = frozenset(
+    {TicketStatus.DRAFT, TicketStatus.CONFIRMED, TicketStatus.IN_PROGRESS}
+)
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def ticket_edit(request: HttpRequest, pk: int) -> HttpResponse:
+    """Edita data/hora/duração/local/observações de um atendimento.
+
+    Cliente, serviços e pagamentos NÃO mudam aqui (têm invariantes de
+    cashflow/cupom) — pra isso, cancela e recria.
+    """
+    if not getattr(request, "company", None):
+        return redirect("app:onboarding")
+    ticket = get_object_or_404(Ticket.objects.select_related("client"), pk=pk)
+
+    if ticket.status not in _EDITABLE_STATUSES:
+        messages.error(
+            request,
+            "Este atendimento não pode mais ser editado (já concluído ou cancelado).",
+        )
+        return redirect("tickets:detail", pk=ticket.pk)
+
+    if request.method == "POST":
+        form = TicketWizardStepSchedule(request.POST)
+        if form.is_valid():
+            ticket.scheduled_at = form.cleaned_data["scheduled_at"]
+            ticket.duration_minutes = form.cleaned_data["duration_minutes"]
+            ticket.location = form.cleaned_data.get("location", "")
+            ticket.notes = form.cleaned_data.get("notes", "")
+            ticket.save(
+                update_fields=[
+                    "scheduled_at",
+                    "duration_minutes",
+                    "location",
+                    "notes",
+                    "updated_at",
+                ]
+            )
+            messages.success(request, "Atendimento atualizado.")
+            return redirect("tickets:detail", pk=ticket.pk)
+    else:
+        initial: dict = {
+            "duration_minutes": ticket.duration_minutes,
+            "location": ticket.location,
+            "notes": ticket.notes,
+        }
+        if ticket.scheduled_at:
+            local = timezone.localtime(ticket.scheduled_at)
+            initial["scheduled_date"] = local.date()
+            initial["scheduled_time"] = local.time()
+        form = TicketWizardStepSchedule(initial=initial)
+
+    return render(request, "tickets/edit.html", {"ticket": ticket, "form": form})
 
 
 # ─────────────────────────────────────────────────────────
